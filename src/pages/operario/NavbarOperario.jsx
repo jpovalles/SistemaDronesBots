@@ -15,7 +15,7 @@ function NavbarOperario(){
                     <li>Robots</li>
                 </ul>
             </nav>
-            <img src="/userIcon.png" alt="Icono del usuario actual" />
+            <img src="/userIcon.png" alt="Icono del usuario actual" className="perfil"/>
         </div>
     );
 }
