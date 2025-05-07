@@ -56,6 +56,12 @@
     border-radius: 30px;
     font-size: 1.2rem;
     border: #d9d9d9 1px solid;
+    transition: ease-in-out 0.3s;
+}
+
+.login form input:focus{
+    border-color: #004aad; 
+    outline: none; 
 }
 
 .login form button{
@@ -74,8 +80,8 @@
 
 .login form button:hover{
     background-color: aliceblue;
-    border: #38b6ff 1px solid;
-    color: #38b6ff;
+    border: #004aad 1px solid;
+    color: #004aad;
     cursor: pointer;
 }
 

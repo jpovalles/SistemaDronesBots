@@ -1,0 +1,73 @@
+.solicitarServicio {
+    display: flex;
+    max-width: 700px;
+    width: 100%;
+    height: 80%;
+    background-color: white;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 2px solid #004aad;
+}
+
+.left-panel {
+    background-color: #004aad;
+    color: white;
+    padding: 32px 24px;
+    width: 40%;
+}
+
+.left-panel h2 {
+    margin-top: 0;
+}
+
+.right-panel {
+    padding: 2em 1em;
+    width: 60%;
+    background-color: white;
+}
+
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.solicitarServicio label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.solicitarServicio input, .solicitarServicio select {
+    width: 70%;
+    padding: 10px 14px;
+
+    border-radius: 30px;
+    font-size: 1.2rem;
+    border: #004aad 1px solid;
+    transition: ease-in-out 0.3s;
+}
+
+.btn {
+    padding: 10px 24px;
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: bold;
+    float: right;
+    border: #004aad 1px solid;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: aliceblue;
+    border: #004aad 1px solid;
+    color: #004aad;
+    cursor: pointer;
+}
+
+
+
+

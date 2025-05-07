@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login"
 
 
-import NavbarOperario from './pages/operario/NavbarOperario';
+import LayoutOperario from "./pages/operario/LayoutOperario";
 import './App.css'
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         </Routes>
         */
       }
-      <NavbarOperario/>
+      <LayoutOperario/>
     </>
   )
 }
