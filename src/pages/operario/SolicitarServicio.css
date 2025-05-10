@@ -69,5 +69,16 @@
 }
 
 
+.solicitarSecond textarea {
+    width: 15em;
+    height: 200px;
+    padding: 10px 14px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    border: #004aad 1px solid;
+    resize: none;
+    margin-bottom: 1em;
 
+    font-family: inherit;
+}
 

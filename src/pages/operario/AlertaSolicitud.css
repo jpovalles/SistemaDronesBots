@@ -1,0 +1,27 @@
+.alerta-solicitud{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    border-radius: 30px;
+    padding: 0.5em;
+}
+
+.alerta-error{
+    background-color: #ff5050;
+    border: 2px solid #8f1919;
+}
+
+.alerta-exito{
+    background-color: #4caf50;
+    border: 2px solid #1f7a1f;
+}
+
+.imagen-alerta img{
+    width: 30%;
+}
+
+.mensaje-alerta p{
+    margin: 0;
+}

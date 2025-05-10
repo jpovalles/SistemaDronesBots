@@ -20,8 +20,10 @@ function SolicitarSecond() {
                     <option value="opcion3d">Edificio Acacias</option>
                 </select>
             </div>
-
-            
+            <div>
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" rows="4" cols="40" placeholder="Escribe tu mensaje"></textarea>
+            </div>
 
             <button class="btn">Siguiente</button>
         </div>
