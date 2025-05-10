@@ -1,0 +1,38 @@
+.final-solicitud{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    
+
+    height: 100%;
+    min-width: 40vw;
+}
+
+.final-solicitud > *{
+    border: 0px solid limegreen;
+    text-align: start;
+}
+
+.final-solicitud p, .final-solicitud h3{
+    margin: 0.5em 0;
+}
+
+.final-titulo{
+    grid-column: span 3;
+}
+
+.final-hora{
+    grid-row-start: 4;
+}
+
+.final-observaciones{
+    grid-column-start: 2;
+    grid-column-end: -1;
+    grid-row-start: 4;
+    grid-row-end: 6;
+}
+
+.final-boton{
+    grid-column-start: 3;
+    grid-row-start: 6;
+}

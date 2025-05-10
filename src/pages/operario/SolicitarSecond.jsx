@@ -1,23 +1,39 @@
 import React from "react";
+import { useState } from "react";
 
 function SolicitarSecond() {
+    const edificios = [
+        "Edificio Las Palmas",
+        "Edificio Guayacanes",
+        "Edificio Aulas del Lago",
+        "Edificio Administrativo",
+        "Edificio Samán",
+        "Edificio Almendros",
+        "Edificio de Educación Continua",
+        "Edificio Las Acacias",
+        "Edificio Cedro Rosado"
+    ]
+    
+    const [origen, setOrigen] = useState(edificios);
+    const [destino, setDestino] = useState(edificios);
+
     return(
         <div className="solicitarSecond">
-            <div class="form-group">
+            <div className="form-group">
                 <label for="origen">Punto de origen</label>
                 <select id="opciones-origen" name="opciones" required>
-                    <option value="opcion1o">Edificio Palmas</option>
-                    <option value="opcion2o">Cedro Rosado</option>
-                    <option value="opcion3o">Edificio Acacias</option>
+                    {origen.map((edificio, index) => (
+                        <option key={index} >{edificio}</option>
+                    ))}
                 </select>
             </div>
 
-            <div class="form-group">
+            <div className="form-group">
                 <label for="destino">Punto de destino</label>
                 <select id="opciones-destino" name="opciones" required>
-                    <option value="opcion1d">Edificio Palmas</option>
-                    <option value="opcion2d">Cedro Rosado</option>
-                    <option value="opcion3d">Edificio Acacias</option>
+                    {origen.map((edificio, index) => (
+                        <option key={index} >{edificio}</option>
+                    ))}
                 </select>
             </div>
             <div>
@@ -25,7 +41,7 @@ function SolicitarSecond() {
                 <textarea id="mensaje" name="mensaje" rows="4" cols="40" placeholder="Escribe tu mensaje"></textarea>
             </div>
 
-            <button class="btn">Siguiente</button>
+            <button className="btn">Siguiente</button>
         </div>
     );
 }
