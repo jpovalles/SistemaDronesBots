@@ -36,6 +36,9 @@ function NavbarOperario({}){
                 <div className="user-menu">
                     <p><strong>Nombre: </strong>{nombreUser}</p>
                     <p><strong>Rol: </strong> {rolUser}</p>
+                    <p className="user-menu-separator">
+                        <hr/>
+                    </p>
                     <button className="logout-btn">Cerrar sesión</button>
                 </div>
             )}

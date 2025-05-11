@@ -90,18 +90,23 @@
     color: black;
     border: 1px solid #004aad;
     padding: 10px 15px;
-    border-radius: 8px;
+    border-radius: 20px;
     z-index: 1000;
     min-width: 200px;
+
+    text-align: start;
 }
 
 .logout-btn {
     background-color: #ff4d4d;
+    
     color: white;
     padding: 10px 15px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     text-align: center;
+    font-size: 1em;
+    font-weight: bold;
     width: 100%;
 }
