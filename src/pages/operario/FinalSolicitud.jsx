@@ -1,8 +1,11 @@
 import React from "react";
 
 import "./FinalSolicitud.css";
+import { useNavigate } from 'react-router-dom';
 
 function FinalSolicitud() {
+    const navigate = useNavigate();
+
     const reserva = {
         id_reserva: "123456789",
         tipo_servicio: "Envío",

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 function SolicitarFirst() {
+    const navigate = useNavigate();
     return(
         <div className="solicitarFirst">
             <div className="form-group">

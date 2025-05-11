@@ -103,6 +103,11 @@
     font-family: inherit;
 }
 
+.final-solicitud textarea:focus {
+    outline: none;
+    border: 1px solid #004aad;
+}
+
  /* Scrollbar general */
     textarea::-webkit-scrollbar {
     width: 8px;

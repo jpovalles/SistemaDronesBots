@@ -1,5 +1,6 @@
 import React from "react";
 import './SolicitarServicio.css'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import SolicitarFirst from "./SolicitarFirst";
 import SolicitarSecond from "./SolicitarSecond";
@@ -16,7 +17,8 @@ function SolicitarServicio() {
                 <AlertaSolicitud mensaje="La solicitud se ha realizado con exito" />
             </div>
             <div className="right-panel">
-                <FinalSolicitud/>
+            <SolicitarFirst/>
+            <Outlet />
             </div>
         </div>
     )

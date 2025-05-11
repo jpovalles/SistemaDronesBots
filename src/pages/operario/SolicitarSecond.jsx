@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 function SolicitarSecond() {
+    const navigate = useNavigate();
     const edificios = [
         "Edificio Las Palmas",
         "Edificio Guayacanes",
@@ -41,7 +43,7 @@ function SolicitarSecond() {
                 <textarea id="mensaje" name="mensaje" rows="4" cols="40" placeholder="Escribe tu mensaje"></textarea>
             </div>
 
-            <button className="btn">Siguiente</button>
+            <button className="btn"  onClick={() => navigate('../3')}>Siguiente</button>
         </div>
     );
 }
