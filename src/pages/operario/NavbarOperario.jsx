@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import './NavbarOperario.css'
 
+import { Link, useMatch, useResolvedPath } from "react-router-dom";
+
 function NavbarOperario({}){
 
     const user = {
@@ -20,17 +22,18 @@ function NavbarOperario({}){
 
             <nav className="menuOperario">
                 <ul>
-                    <li className="nav-btn">
+                    <CustomLink to="/operario/solicitarServicio">
                         Solicitar servicio
-                    </li>
-                    <li className="nav-btn">
-                            Solicitudes
-                    </li>
-                    <li className="nav-btn">
-                            Robots
-                    </li>
+                    </CustomLink>
+                    <CustomLink to="/operario/solicitudes">
+                        Solicitudes
+                    </CustomLink>
+                    <CustomLink to="/operario/robots">
+                        Robots
+                    </CustomLink>
                 </ul>
             </nav>
+
             <img src="/userIcon.png" alt="Icono del usuario actual" className="perfil" onClick={toggleMenu}/>
             {mostrarMenu && (
                 <div className="user-menu">
@@ -43,6 +46,19 @@ function NavbarOperario({}){
                 </div>
             )}
         </div>
+    );
+}
+
+function CustomLink({to, children, ...props}){
+    const resolvedPath = useResolvedPath(to);
+    const isActive = useMatch({ path: resolvedPath.pathname, end: true });
+
+    return (
+        <li className={isActive ? "active" : "optionOp"}>
+            <Link to={to} {...props} className="link">
+                {children}
+            </Link>
+        </li>
     );
 }
 

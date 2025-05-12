@@ -3,15 +3,13 @@ import React from "react";
 import './LayoutOperario.css';
 
 import NavbarOperario from "./NavbarOperario";
-import SolicitarServicio from "./SolicitarServicio";
-import Pedidos from "./Pedidos";
 
-function LayoutOperario(){
+function LayoutOperario({Opcion}){
     return(
         <div className="layout-operario">
             <NavbarOperario/>
             <div className="content">
-                <Pedidos/>
+                <Opcion/>
             </div>
         </div>
     );
