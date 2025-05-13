@@ -61,16 +61,46 @@
     height: 100%;
   }
 
-  .optionContainer{
-    border-radius: 60%;
-    transition:  ease-in-out 0.2s;
-  }
-  .optionContainer:hover{
+  .optionsQuery{
+    display: flex;
+    justify-content: center;
+
     background-color: white;
-    border-radius: 60%;
+    border-radius: 60px;
+    height: 3em;
+  }
+
+  .close-option-query{
+    color: #004aad;
+  }
+
+  .close-option-query:hover{
+    color: #004aad;
     cursor: pointer;
   }
 
-  .optionContainer:hover .optionIcon{
-    fill: #004aad;
+  .delete-query > *{
+    fill:#ff5050;
+    height: 90%;
+  }
+
+  .info-query > *{
+    fill:#004aad;
+    height: 100%;
+  }
+
+   .info-query:hover > *{
+    cursor: pointer;
+    fill: white;
+    stroke: #004aad;
+  }
+
+  .delete-query:hover > *{
+    cursor: pointer;
+    fill: white;
+    stroke: #ff5050;
+  }
+
+  .options-cont{
+    min-width: 8em;
   }
