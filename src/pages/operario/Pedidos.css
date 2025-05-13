@@ -45,7 +45,7 @@
   
   .pedidos-table th,
   .pedidos-table td {
-    padding: 12px;
+    padding: 0.7em;
     border-bottom: 2px solid white;
     text-align: left;
   }
@@ -54,4 +54,23 @@
     cursor: pointer;
     font-size: 18px;
   }
-  
+
+
+  .optionIcon{
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .optionContainer{
+    border-radius: 60%;
+    transition:  ease-in-out 0.2s;
+  }
+  .optionContainer:hover{
+    background-color: white;
+    border-radius: 60%;
+    cursor: pointer;
+  }
+
+  .optionContainer:hover .optionIcon{
+    fill: #004aad;
+  }
