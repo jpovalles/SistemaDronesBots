@@ -96,7 +96,7 @@
   color: #000000;
 }
 
-.estado-entregando {
+.estado-entregado {
   background-color: #2ECC40;
   color: #FFFFFF;
 }
@@ -105,4 +105,18 @@
   width: 50px;     /* o el tamaño que necesites */
   height: 35px;    /* mantené proporción si es cuadrado */
   cursor: pointer; /* para que se vea como botón */
+}
+
+.btn-ojo {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.botones-estado-act{
+    width: 100%;
 }

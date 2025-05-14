@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login/Login"
-
-
 import LayoutOperario from "./pages/operario/LayoutOperario";
 import SolicitarServicio from "./pages/operario/SolicitarServicio";
 import GestionUsuarios from "./pages/admin/GestionUsuarios";
