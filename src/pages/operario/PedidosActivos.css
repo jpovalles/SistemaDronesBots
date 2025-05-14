@@ -1,0 +1,108 @@
+.pedidos-container-principal {
+  /* padding: 20px; */
+  background-color: #004aad;
+  border-radius: 16px;
+  color: white;
+  font-family: sans-serif;
+  /* max-width: 70%; */
+}
+
+.pedidos-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tab-opt {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  color: #004aad;
+}
+
+
+.tab.active-opt {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}
+
+.search-input-act {
+  margin-left: auto;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  width: 200px;
+  outline: none;
+}
+
+.pedidos-table-act {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0052cc;
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pedidos-table-act th,
+.pedidos-table-act td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pedidos-table-act th {
+  font-weight: 600;
+}
+
+.pedidos-table-act tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para los estados de pedidos */
+.estado-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-align: center;
+  width: 800px;
+}
+
+.estado-en-camino {
+  background-color: #FFD700;
+  color: #000000;
+}
+
+.estado-retornando {
+  background-color: #FFD700;
+  color: #000000;
+}
+
+.estado-error {
+  background-color: #FF4136;
+  color: #FFFFFF;
+}
+
+.estado-hacia-base {
+  background-color: #FFD700;
+  color: #000000;
+}
+
+.estado-entregando {
+  background-color: #2ECC40;
+  color: #FFFFFF;
+}
+
+.imagen-ojo {
+  width: 50px;     /* o el tamaño que necesites */
+  height: 35px;    /* mantené proporción si es cuadrado */
+  cursor: pointer; /* para que se vea como botón */
+}
