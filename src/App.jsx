@@ -23,7 +23,6 @@ function App() {
           <Route path="/operario/solicitudes" element={<LayoutOperario Opcion={Pedidos}/>}/>
           <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionUsuarios}/>}/>
           <Route path="/administrador/gestionUsuarios" element={<LayoutAdmin Opcion={GestionUsuarios}/>}/>
-          
         </Routes>
     </>
   )

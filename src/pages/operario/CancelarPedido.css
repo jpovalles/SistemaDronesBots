@@ -1,0 +1,72 @@
+.cancel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;   /* ocupa todo el ancho de la pantalla */
+    height: 100vh;  /* ocupa todo el alto de la pantalla */
+    background-color: rgba(0, 0, 0, 0.5); /* fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* asegúrate de que esté encima de todo */
+}
+
+.cancelar-pedido{
+    display: flex;
+    flex-direction: column;
+    background-color: #ff5050;
+    border: 2px solid #8f1919;
+    gap: 2em;
+
+    width: 40vw;
+    border-radius: 30px;
+    padding: 1em 2em;
+}
+
+.cancelar-pedido h1{
+    color: white;
+}
+
+.cancel-info{
+    padding-left: 3em;
+}
+
+.cancelar-pedido p{
+    color: white;
+    text-align: left;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.cancel-buttons{
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+    gap: 2em;
+}
+
+.cancel-confirm{
+    color:#ff5050;
+    background-color: white;
+    border: 2px solid white;
+    font-size: 1.5em;
+}
+
+.cancel-confirm:hover{
+    color: white;
+    background-color: #ff5050;
+    border: 2px solid white;
+}
+
+.cancel-back{
+    color: white;
+    background-color: #ff5050;
+    border: 2px solid white;
+    font-size: 1.5em;
+}
+
+.cancel-back:hover{
+    color: #ff5050;
+    background-color: white;
+    border: 2px solid white;
+}
