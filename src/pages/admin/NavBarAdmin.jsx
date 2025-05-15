@@ -22,11 +22,11 @@ function NavBarAdmin({}){
 
             <nav className="menuAdmin">
                 <ul>
-                    <CustomLink to="/administrador/modificarUsuarios">
+                    <CustomLink to="/administrador/gestionarUsuarios">
                         Gestionar Usuario
                     </CustomLink>
                     <CustomLink to="/administrador/agregarUsuario">
-                        Agregar Usuario
+                        Gestionar dispositivos
                     </CustomLink>
                     <CustomLink to="/operario/robots">
                         Robots
