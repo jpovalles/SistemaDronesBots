@@ -9,16 +9,17 @@ import FinalSolicitud from "./FinalSolicitud";
 
 function SolicitarServicio() {
 
+    const [showAlert, setShowAlert] = React.useState(false);
+
     return(
         <div className="solicitarServicio">
             <div className="left-panel">
                 <h2>Solicitar servicio</h2>
                 <p>Formulario para registrar y programar pedidos con robots y drones.</p>
-                <AlertaSolicitud mensaje="La solicitud se ha realizado con exito" />
+                {showAlert && <AlertaSolicitud mensaje="La solicitud se ha realizado con exito" />}
             </div>
             <div className="right-panel">
-            <SolicitarFirst/>
-            <Outlet />
+                <SolicitarFirst/>
             </div>
         </div>
     )

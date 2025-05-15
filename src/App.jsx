@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login/Login"
+
 import LayoutOperario from "./pages/operario/LayoutOperario";
-import SolicitarServicio from "./pages/operario/SolicitarServicio";
+import SolicitarServicio from "./pages/operario/solicitarServicio/SolicitarServicio";
+import Pedidos from "./pages/operario/pedidos/Pedidos";
+import PedidosActivos from "./pages/operario/pedidos/PedidosActivos"
+
 import ModificarUsuarios from "./pages/admin/ModificarUsuarios";
-import Pedidos from "./pages/operario/Pedidos";
-import PedidosActivos from "./pages/operario/PedidosActivos"
 import LayoutAdmin from "./pages/admin/LayoutAdmin";
 import AgregarUsuario from './pages/admin/AgregarUsuario';
 import GestionarUsuarios from './pages/admin/GestionarUsuarios';
