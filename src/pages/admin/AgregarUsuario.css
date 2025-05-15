@@ -1,0 +1,95 @@
+.contenedor{
+    background-color: #004aad;
+    width: 90%;
+    margin: 5px auto;
+    font-family: sans-serif;
+    border-radius: 20px;
+}
+
+.encabezado{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.titulo{
+  color: white;
+}
+
+.contenedor2{
+  background-color: #004aad;
+  border-radius: 10px;
+  width: 100%;
+  overflow-x: auto;
+  height: 480px;
+  align-items: center;
+}
+
+.nombres{
+    margin-top: 20px;
+    color: white;
+    margin-bottom: 5px;
+    height: 20px;
+}
+
+.form{
+    width: 50%;
+    padding: 8px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.cont_botones{
+    margin-top: 20px;
+    display: flex; 
+    justify-content: center; 
+    gap: 3rem;
+}
+
+.boton{
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    height: 20px;
+    font-size: px;
+    height: auto;
+    color: white;
+}
+
+.cancelar{
+    background-color: #d41717;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.enviar{
+    background-color: #2196F3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.mensaje-exito{
+    background-color: #d4edda;
+    color: #155724;
+    margin-left: 34%;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #c3e6cb;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    width: 30%;
+}

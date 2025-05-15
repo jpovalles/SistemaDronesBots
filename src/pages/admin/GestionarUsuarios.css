@@ -1,0 +1,32 @@
+.contenedor{
+    background-color: #004aad;
+    width: 90%;
+    margin: 5px auto;
+    font-family: sans-serif;
+    border-radius: 20px;
+}
+
+.accion-tab {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
+}
+
+.tab {
+  background-color: white;
+  color: #004aad;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+}
+
+.tab.active {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}

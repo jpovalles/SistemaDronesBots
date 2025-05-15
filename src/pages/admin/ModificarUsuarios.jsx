@@ -1,8 +1,8 @@
-import './GestionUsuarios.css';
+import './ModificarUsuarios.css';
 import { useState } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa'; 
 
-function GestionUsuarios(){
+function ModificarUsuarios(){
     const [users, setUsers] = useState([{usuario: "jpospinac", contr: "12345678", nombre: "Juan Ospina", rol: "Operario"},
         {usuario: "senriquez", contr: "87654321", nombre: "Sebastian Enriquez", rol: "Administrador"},
         {usuario: "jhurtado", contr: "02347208", nombre: "Juan Hurtado", rol: "Administrador"}
@@ -96,5 +96,5 @@ function GestionUsuarios(){
     )
 }
 
-export default GestionUsuarios;
+export default ModificarUsuarios;
 

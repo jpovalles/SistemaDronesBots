@@ -1,9 +1,7 @@
 .contenedor{
-    background-color: #004aad;
-    width: 90%;
-    margin: 30px auto;
-    font-family: sans-serif;
-    border-radius: 20px;
+  background-color: #004aad;
+  font-family: sans-serif;
+  width: 100%;
 }
 
 .encabezado{
@@ -23,6 +21,7 @@
 .contenedorTabla {
   background-color: #003fbb;
   border-radius: 10px;
+  width: 100%;
   overflow-x: auto;
 }
 

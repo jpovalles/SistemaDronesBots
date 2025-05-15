@@ -4,10 +4,12 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login"
 import LayoutOperario from "./pages/operario/LayoutOperario";
 import SolicitarServicio from "./pages/operario/SolicitarServicio";
-import GestionUsuarios from "./pages/admin/GestionUsuarios";
+import ModificarUsuarios from "./pages/admin/ModificarUsuarios";
 import Pedidos from "./pages/operario/Pedidos";
 import PedidosActivos from "./pages/operario/PedidosActivos"
 import LayoutAdmin from "./pages/admin/LayoutAdmin";
+import AgregarUsuario from './pages/admin/AgregarUsuario';
+import GestionarUsuarios from './pages/admin/GestionarUsuarios';
 import './App.css'
 
 function App() {
@@ -20,8 +22,8 @@ function App() {
           <Route path="/operario/solicitarServicio" element={<LayoutOperario Opcion={SolicitarServicio}/>}/>
           <Route path="/operario/solicitudes" element={<LayoutOperario Opcion={Pedidos}/>}/>
           <Route path="/operario/pedidosActivos" element={<LayoutOperario Opcion={PedidosActivos}/>}/>
-          <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionUsuarios}/>}/>
-          <Route path="/administrador/gestionUsuarios" element={<LayoutAdmin Opcion={GestionUsuarios}/>}/>
+          <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
+          <Route path="/administrador/gestionarUsuarios" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
         </Routes>
     </>
   )
