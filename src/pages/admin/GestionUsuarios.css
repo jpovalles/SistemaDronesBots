@@ -1,0 +1,107 @@
+.contenedor{
+    background-color: #004aad;
+    width: 90%;
+    margin: 30px auto;
+    font-family: sans-serif;
+    border-radius: 20px;
+}
+
+.encabezado{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.buscador {
+  padding: 10px 100px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.contenedorTabla {
+  background-color: #003fbb;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+th, td {
+  padding: 12px 10px;
+  height: 12px;
+  text-align: left;
+  vertical-align: center;
+  border-bottom: 1px solid #ffffff22;
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.icono {
+  background-color: white;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icono.editar {
+  color: #007bff;
+}
+
+.icono.eliminar {
+  color: red;
+}
+
+.tabla input {
+  width: 50%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: white;
+  text-align: center;
+  font-size: 14 px;
+}
+.botones-edicion {
+  display: flex;
+  height: 12px;
+  padding: 12px;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.boton-texto {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  margin-left: 2px;
+  gap: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.boton-texto:hover {
+  background-color: #eee;
+}
+
+.boton-texto.cancelar{
+    background-color: red;
+    border: none;
+    color: white;
+}
+
+.boton-texto.guardar{
+    background-color: #007bff;
+    border: none;
+}
