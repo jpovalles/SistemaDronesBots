@@ -1,0 +1,144 @@
+.detalle-pedido-container {
+  width: 100%;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.detalle-pedido-header {
+  display: flex;
+  align-items: center;
+  background-color: #0047ab;
+  color: white;
+  padding: 12px 20px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.btn-back:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.detalle-id {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.detalle-pedido-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.detalle-info-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  background-color: #0047ab;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.detalle-info-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.info-value {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.detalle-observaciones {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.observaciones-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.observaciones-textarea {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: none;
+  height: 100px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.detalle-progreso-section {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progreso-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin: 5px 0;
+}
+
+.progreso-circulo {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background-color: white;
+  margin-right: 15px;
+  z-index: 2;
+}
+
+.progreso-circulo.activo {
+  border-color: #0047ab;
+  background-color: #0047ab;
+}
+
+.progreso-texto {
+  font-size: 14px;
+  color: #333;
+}
+
+.progreso-linea {
+  width: 2px;
+  height: 20px;
+  background-color: #ccc;
+  margin-left: 18px;
+  z-index: 1;
+}
+
+/* Para que la línea de progreso adopte el color cuando está activo */
+.progreso-item .progreso-circulo.activo + .progreso-texto {
+  color: #0047ab;
+  font-weight: 600;
+}
