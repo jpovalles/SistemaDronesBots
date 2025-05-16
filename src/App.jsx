@@ -4,9 +4,6 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login"
 
 import LayoutOperario from "./pages/operario/LayoutOperario";
-import SolicitarServicio from "./pages/operario/SolicitarServicio";
-import Pedidos from "./pages/operario/Pedidos";
-import PedidosActivos from "./pages/operario/PedidosActivos"
 import SolicitarServicio from "./pages/operario/solicitarServicio/SolicitarServicio";
 import Pedidos from "./pages/operario/pedidos/Pedidos";
 import PedidosActivos from "./pages/operario/pedidos/PedidosActivos"

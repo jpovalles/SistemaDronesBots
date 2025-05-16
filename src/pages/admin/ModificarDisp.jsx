@@ -50,7 +50,7 @@ function ModificarDisp(){
                         <tr>
                             <th>Id</th>
                             <th>Tipo</th>
-                            <th>Capacidad</th>
+                            <th>Capacidad (Kg)</th>
                             <th>Estado</th>
                             <th>Fecha</th>
                             <th></th>
