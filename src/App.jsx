@@ -4,12 +4,11 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login"
 import LayoutOperario from "./pages/operario/LayoutOperario";
 import SolicitarServicio from "./pages/operario/SolicitarServicio";
-import ModificarUsuarios from "./pages/admin/ModificarUsuarios";
 import Pedidos from "./pages/operario/Pedidos";
 import PedidosActivos from "./pages/operario/PedidosActivos"
 import LayoutAdmin from "./pages/admin/LayoutAdmin";
-import AgregarUsuario from './pages/admin/AgregarUsuario';
 import GestionarUsuarios from './pages/admin/GestionarUsuarios';
+import GestionarDisp from './pages/admin/GestionarDisp';
 import './App.css'
 
 function App() {
@@ -24,6 +23,7 @@ function App() {
           <Route path="/operario/pedidosActivos" element={<LayoutOperario Opcion={PedidosActivos}/>}/>
           <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
           <Route path="/administrador/gestionarUsuarios" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
+          <Route path="/administrador/gestionarDispositivos" element={<LayoutAdmin Opcion={GestionarDisp}/>}/>
         </Routes>
     </>
   )
