@@ -16,7 +16,6 @@ function ModificarUsuarios(){
         user.nombre.toLowerCase().includes(busqueda.toLowerCase())
     );
 
-
     const handleDelete = (usuario) => {
         const confirmed = window.confirm(`¿Seguro que quieres eliminar al usuario "${usuario}"?`);
         if (confirmed) {

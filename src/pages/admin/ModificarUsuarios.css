@@ -72,7 +72,6 @@ th, td {
   font-size: 14 px;
 }
 .botones-edicion {
-  display: flex;
   height: 12px;
   padding: 12px;
   gap: 5px;
@@ -81,26 +80,23 @@ th, td {
 }
 
 .boton-texto {
-  border: 1px solid #ccc;
-  padding: 8px 10px;
-  margin-left: 2px;
-  gap: 10px;
+  padding: 8px 12px;
+  margin-left: 5px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-}
-
-.boton-texto:hover {
-  background-color: #eee;
+  min-width: 90px;
 }
 
 .boton-texto.cancelar{
     background-color: red;
     border: none;
-    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
 }
 
 .boton-texto.guardar{
     background-color: #007bff;
+    padding: 8px 12px;
     border: none;
 }
