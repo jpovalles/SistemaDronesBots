@@ -1,26 +1,67 @@
-import React from "react";
+import {React, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 
-function SolicitarFirst() {
-    const navigate = useNavigate();
+function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolicitud}) {
+    const [codigoRem, setCodigoRem] = useState(solicitud.remitente.codigo);
+    const [codigoDest, setCodigoDest] = useState(solicitud.destinatario.codigo);
+
+    const fechaPorDefecto = "2025-01-01T07:00";
+    const [hora, setHora] = useState(fechaPorDefecto);
+    
+
+    const handleChange = (setCodigo) => (e) => {
+        const value = e.target.value;
+        // Solo permitir números y máximo 7 caracteres
+        if (/^\d{0,7}$/.test(value)) {
+            setCodigo(value);
+        }
+    };
+    
+    const handleSubmit = () => {
+        if (codigoRem.length !== 7 || codigoDest.length !== 7) {
+            showAlert("Los códigos de usuario deben tener exactamente 7 dígitos.");
+            alertaEstado("error");
+            return;
+        }
+
+        showAlert("");
+        alertaEstado("");
+
+        setSolicitud(prev => ({
+            ...prev,
+            horaInicio: fechaPorDefecto,
+            remitente: {
+                ...prev.remitente,
+                codigo: codigoRem
+            },
+            destinatario: {
+                ...prev.destinatario,
+                codigo: codigoDest
+            }
+        }));
+
+        nextStep();
+      // Continuar con el proceso
+    };
+
     return(
         <div className="solicitarFirst">
             <div className="form-group">
                 <label for="solicitante">Usuario solicitante</label>
-                <input type="number" id="solicitante" placeholder="Id del solicitante" required/>
+                <input type="text" id="solicitante" placeholder="Id del solicitante" value={codigoRem} onChange={handleChange(setCodigoRem)} required/>
             </div>
 
             <div className="form-group">
                 <label for="destinatario">Usuario destinatario</label>
-                <input type="number" id="destinatario" placeholder="Id del destinatario" required/>
+                <input type="text" id="destinatario" placeholder="Id del destinatario" value={codigoDest} onChange={handleChange(setCodigoDest)}  required/>
             </div>
 
             <div className="form-group">
                 <label for="hora">Hora del servicio</label>
-                <input type="datetime-local" id="hora" placeholder="00 : 00 am" required/>
+                <input type="datetime-local" id="hora" placeholder="00 : 00 am" defaultValue={fechaPorDefecto} step="1800" onChange={e => setHora(e.target.value)} required/>
             </div>
 
-            <button className="btn">Siguiente</button>
+            <button className="btn" onClick={() => handleSubmit()}>Siguiente</button>
         </div>
     );
 }
