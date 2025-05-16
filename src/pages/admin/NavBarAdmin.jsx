@@ -31,6 +31,12 @@ function NavBarAdmin({}){
                     <CustomLink to="/operario/robots">
                         Robots
                     </CustomLink>
+                    <CustomLink to="/administrador/reportes">
+                        Bitácora
+                    </CustomLink>
+                    <CustomLink to="/administrador/videos">
+                        Videos
+                    </CustomLink>
                 </ul>
             </nav>
 

@@ -10,6 +10,7 @@ import PedidosActivos from "./pages/operario/pedidos/PedidosActivos"
 import LayoutAdmin from "./pages/admin/LayoutAdmin";
 import GestionarUsuarios from './pages/admin/GestionarUsuarios';
 import GestionarDisp from './pages/admin/GestionarDisp';
+import ReporteServicios from './pages/admin/ReporteServicios';
 import './App.css'
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
           <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
           <Route path="/administrador/gestionarUsuarios" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
           <Route path="/administrador/gestionarDispositivos" element={<LayoutAdmin Opcion={GestionarDisp}/>}/>
+          <Route path="/administrador/reportes" element={<LayoutAdmin Opcion={ReporteServicios}/>}/>
+
         </Routes>
     </>
   )
