@@ -3,8 +3,7 @@ import React from "react";
 import "./FinalSolicitud.css";
 import { useNavigate } from 'react-router-dom';
 
-function FinalSolicitud() {
-    const navigate = useNavigate();
+function FinalSolicitud({previousStop, solicitud}) {
 
     const reserva = {
         id_reserva: "123456789",
@@ -23,7 +22,7 @@ function FinalSolicitud() {
         destino: "Edificio Palmas",
         observaciones: "DelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicado"
         };
-    const { id_reserva, tipo_servicio, hora_inicio, tecnico_asociado, remitente, destinatario, origen, destino, observaciones } = reserva;
+    const { idReserva, tipoServicio, horaInicio, tecnicoAsociado, remitente, destinatario, origen, destino, observaciones } = solicitud;
     return (
         <div className="final-solicitud">
             <div className="final-titulo">
@@ -31,7 +30,7 @@ function FinalSolicitud() {
             </div>
             <div>
                 <h3>Id de la reserva</h3>
-                <p>{id_reserva}</p>
+                <p>{idReserva}</p>
             </div>
             <div>
                 <h3>Remitente</h3>
@@ -44,7 +43,7 @@ function FinalSolicitud() {
             </div>
             <div>
                 <h3>Tipo de servicio</h3>
-                <p>{tipo_servicio}</p>
+                <p>{tipoServicio}</p>
             </div>
             <div>
                 <h3>Destinatario</h3>
@@ -57,7 +56,7 @@ function FinalSolicitud() {
             </div>
             <div className="final-hora">
                 <h3>Hora de inicio</h3>
-                <p>{hora_inicio}</p>
+                <p>{horaInicio}</p>
             </div>
             <div className="final-observaciones">
                 <h3>Observaciones</h3>
@@ -65,10 +64,11 @@ function FinalSolicitud() {
             </div>
             <div className="final-tecnico">
                 <h3>Técnico asociado</h3>
-                <p>{tecnico_asociado}</p>
+                <p>{tecnicoAsociado}</p>
             </div>
             <div className="final-boton">
                 <button className="btn">Finalizar</button>
+                <button className="btn" onClick={() => previousStop()}>Atrás</button>
             </div>
         </div>
     );

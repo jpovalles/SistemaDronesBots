@@ -1,4 +1,4 @@
-import React from "react";
+import {useState, React} from "react";
 import './SolicitarServicio.css'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
@@ -9,17 +9,48 @@ import FinalSolicitud from "./FinalSolicitud";
 
 function SolicitarServicio() {
 
-    const [showAlert, setShowAlert] = React.useState(false);
+    const [showAlert, setShowAlert] = useState("");
+    const [alertaEstado, setAlertaEstado] = useState("");
+
+    const [step, setStep] = useState(1);
+
+    const [solicitud, setSolicitud] = useState({
+        idReserva: "",
+        tipoServicio: "",
+        horaInicio: "",
+        tecnicoAsociado: "",
+        remitente: {
+            nombre: "",
+            codigo: ""
+        },
+        destinatario: {
+            nombre: "",
+            codigo: ""
+        },
+        origen: "",
+        destino: "",
+        observaciones: ""
+    });
+
+    const handleNextStep = () => {
+        setStep((prevStep) => prevStep + 1);
+    }
+
+    const handlePreviousStep = () => {
+        setStep((prevStep) => prevStep - 1);
+    }
 
     return(
         <div className="solicitarServicio">
             <div className="left-panel">
                 <h2>Solicitar servicio</h2>
                 <p>Formulario para registrar y programar pedidos con robots y drones.</p>
-                {showAlert && <AlertaSolicitud mensaje="La solicitud se ha realizado con exito" />}
+                {showAlert && <AlertaSolicitud mensaje={showAlert} estado={alertaEstado}/>}
             </div>
             <div className="right-panel">
-                <SolicitarFirst/>
+                {step === 1 && <SolicitarFirst nextStep={handleNextStep} showAlert={setShowAlert} alertaEstado={setAlertaEstado} solicitud={solicitud} setSolicitud={setSolicitud}/>}
+                {step === 2 && <SolicitarSecond nextStep={handleNextStep} previousStop={handlePreviousStep} showAlert={setShowAlert} alertaEstado={setAlertaEstado} solicitud={solicitud} setSolicitud={setSolicitud}/>}
+                {step === 3 && <FinalSolicitud previousStop={handlePreviousStep} solicitud={solicitud}/>}
             </div>
         </div>
     )
