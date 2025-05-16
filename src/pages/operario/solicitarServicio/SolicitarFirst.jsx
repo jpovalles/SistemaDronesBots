@@ -17,7 +17,7 @@ function SolicitarFirst() {
 
             <div className="form-group">
                 <label for="hora">Hora del servicio</label>
-                <input type="datetime-local" id="hora" placeholder="00 : 00 am"required/>
+                <input type="datetime-local" id="hora" placeholder="00 : 00 am" required/>
             </div>
 
             <button className="btn">Siguiente</button>
