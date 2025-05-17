@@ -1,0 +1,121 @@
+.contenedor-inventario {
+  font-family: 'Segoe UI', sans-serif;
+  background: #fefefe;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 80%;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-inventario {
+  text-align: center;
+  color: #1a2d4a;
+}
+
+.filtros-inventario {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.filtros-inventario select,
+.filtros-inventario button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+.resumen-inv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  color: #444;
+}
+
+.busqueda-temp {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.busqueda-temp input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.temperatura {
+  background: #f4f4f4;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.tabla-inventario {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 14px;
+}
+
+.tabla-inventario th {
+  border: 1px solid #e2e2e2;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.tabla-inventario td {
+  border: 1px solid #e2e2e2;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.estado {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.estado.operativo {
+  background: #d4f4dd;
+  color: #2e7d32;
+}
+
+.estado.mantenimiento {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado.fuera-de-servicio {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.bateria {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  background: #e6f4ea;
+  color: #256029;
+  font-weight: bold;
+}
+
+.btn-aplicar { background-color: #007bff; color: white; }
+.btn-borrar { background-color: #6c757d; color: white; }
+
+.btn-aplicar:hover { background-color: #0056b3; }
+.btn-borrar:hover { background-color: #5a6268; }

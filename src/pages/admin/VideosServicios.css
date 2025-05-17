@@ -38,13 +38,11 @@
 
 .btn-buscar { background-color: #007bff; color: white; }
 .btn-limpiar { background-color: #6c757d; color: white; }
-.btn-exportar { background-color: #17a2b8; color: white; }
 .btn-descargar { background-color: #28a745; color: white; }
 .btn-eliminar { background-color: #dc3545; color: white; }
 
 .btn-buscar:hover { background-color: #0056b3; }
 .btn-limpiar:hover { background-color: #5a6268; }
-.btn-exportar:hover { background-color: #138496; }
 .btn-descargar:hover { background-color: #218838; }
 .btn-eliminar:hover { background-color: #c82333; }
 
