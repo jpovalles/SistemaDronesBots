@@ -28,7 +28,7 @@ function NavBarAdmin({}){
                     <CustomLink to="/administrador/gestionarDispositivos">
                         Gestionar dispositivos
                     </CustomLink>
-                    <CustomLink to="/operario/robots">
+                    <CustomLink to="/administrador/robots">
                         Robots
                     </CustomLink>
                     <CustomLink to="/administrador/reportes">

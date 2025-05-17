@@ -30,7 +30,8 @@ function App() {
           <Route path="/administrador/gestionarDispositivos" element={<LayoutAdmin Opcion={GestionarDisp}/>}/>
           <Route path="/administrador/reportes" element={<LayoutAdmin Opcion={ReporteServicios}/>}/>
           <Route path="/administrador/videos" element={<LayoutAdmin Opcion={VideosServicios}/>}/>
-          <Route path="/operario/robots" element={<LayoutAdmin Opcion={InventarioRobots}/>}/>
+          <Route path="/administrador/robots" element={<LayoutAdmin Opcion={InventarioRobots}/>}/>
+          <Route path="/operario/robots" element={<LayoutOperario Opcion={InventarioRobots}/>}/>
 
         </Routes>
     </>
