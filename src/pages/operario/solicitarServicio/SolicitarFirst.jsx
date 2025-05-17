@@ -1,9 +1,10 @@
 import {React, useState} from "react";
 import { useNavigate } from 'react-router-dom';
+import {verificarMulta} from "../../../api";
 
 function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolicitud}) {
-    const [codigoRem, setCodigoRem] = useState(solicitud.remitente.codigo);
-    const [codigoDest, setCodigoDest] = useState(solicitud.destinatario.codigo);
+    const [codigoRem, setCodigoRem] = useState(solicitud.remitente);
+    const [codigoDest, setCodigoDest] = useState(solicitud.destinatario);
 
     const fechaPorDefecto = "2025-01-01T07:00";
     const [hora, setHora] = useState(fechaPorDefecto);
@@ -17,12 +18,28 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
         }
     };
     
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (codigoRem.length !== 7 || codigoDest.length !== 7) {
             showAlert("Los códigos de usuario deben tener exactamente 7 dígitos.");
             alertaEstado("error");
             return;
         }
+
+        if (codigoRem === codigoDest) {
+            showAlert("El código del remitente y el destinatario no pueden ser iguales.");
+            alertaEstado("error");
+            return;
+        }
+
+        const multa = await verificarMulta({ idRemitente: codigoRem });
+        console.log(multa);
+        if (multa) {
+            showAlert(multa.mensaje);
+            alertaEstado("error");
+            return;
+        }
+
+
 
         showAlert("");
         alertaEstado("");
@@ -30,14 +47,8 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
         setSolicitud(prev => ({
             ...prev,
             horaInicio: fechaPorDefecto,
-            remitente: {
-                ...prev.remitente,
-                codigo: codigoRem
-            },
-            destinatario: {
-                ...prev.destinatario,
-                codigo: codigoDest
-            }
+            remitente: codigoRem,
+            destinatario: codigoDest
         }));
 
         nextStep();

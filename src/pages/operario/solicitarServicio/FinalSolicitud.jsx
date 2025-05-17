@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function FinalSolicitud({previousStop, solicitud}) {
 
     const operario = "Roberto Gomez"
-    const { idReserva, tipoServicio, horaInicio, remitente, destinatario, origen, destino, observaciones } = solicitud;
+    const { horaInicio, remitente, destinatario, origen, destino, observaciones } = solicitud;
     return (
         <div className="final-solicitud">
             <div className="final-titulo">
@@ -19,20 +19,16 @@ function FinalSolicitud({previousStop, solicitud}) {
             <div>
                 <h3>Remitente</h3>
                 <p>{remitente.nombre}</p>
-                <p>{remitente.idEstudiante}</p>
+                <p>{remitente}</p>
             </div>
             <div>
                 <h3>Origen</h3>
                 <p>{origen}</p>
             </div>
             <div>
-                <h3>Tipo de servicio</h3>
-                <p>{tipoServicio}</p>
-            </div>
-            <div>
                 <h3>Destinatario</h3>
                 <p>{destinatario.nombre}</p>
-                <p>{destinatario.idEstudiante}</p>
+                <p>{destinatario}</p>
             </div>
             <div>
                 <h3>Destino</h3>

@@ -15,18 +15,9 @@ function SolicitarServicio() {
     const [step, setStep] = useState(1);
 
     const [solicitud, setSolicitud] = useState({
-        idReserva: "",
-        tipoServicio: "",
         horaInicio: "",
-        tecnicoAsociado: "",
-        remitente: {
-            nombre: "",
-            codigo: ""
-        },
-        destinatario: {
-            nombre: "",
-            codigo: ""
-        },
+        remitente: "",
+        destinatario: "",
         origen: "",
         destino: "",
         observaciones: ""

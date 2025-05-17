@@ -1,0 +1,66 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const {Pool} = require('pg');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT
+});
+
+
+pool.connect()
+    .then(() => console.log("✅ Conexión exitosa con PostgreSQL"))
+    .catch(err => console.error("❌ Error al conectar con PostgreSQL:", err));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en ${PORT}`);
+})
+
+
+// CRUD reservas
+app.post('/api/reservas', async (req, res) => {
+    const { horaInicio, remitente, destinatario, origen, destino, observaciones } = req.body;
+    const [fecha, hora] = horaInicio.split("T");
+    try {
+        const result = await pool.query(
+            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [ remitente, destinatario, fecha, hora, destino, origen, observaciones]
+        );
+        res.status(201).json({ message: 'Reserva creada' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear la reserva' });
+    }
+});
+
+// Verificar multa
+app.get('/api/multas/:idRemitente', async (req, res) => {
+    const { idRemitente } = req.params;
+    try {
+        const result = await pool.query(
+            'SELECT * FROM multas WHERE idcliente = $1',
+            [idRemitente]
+        );
+        console.log(result.rows);
+        if (result.rows.length > 0) {
+            res.status(200).json({
+                mensaje: `El remitente tiene una multa activa por valor de $${result.rows[0].valor}`,
+            });
+        } else {
+            res.status(204).send();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al verificar la multa' });
+    }
+});
