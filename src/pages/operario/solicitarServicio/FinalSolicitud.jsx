@@ -5,24 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 function FinalSolicitud({previousStop, solicitud}) {
 
-    const reserva = {
-        id_reserva: "123456789",
-        tipo_servicio: "Envío",
-        hora_inicio: "12:15 pm",
-        tecnico_asociado: "Roberto Gomez",
-        remitente: {
-            nombre: "Juan Pablo Ospina",
-            idEstudiante: "123456789"
-        },
-        destinatario: {
-            nombre: "Juan Pablo Ovalles",
-            idEstudiante: "123456789"
-        },
-        origen: "Biblioteca",
-        destino: "Edificio Palmas",
-        observaciones: "DelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicadoDelicado"
-        };
-    const { idReserva, tipoServicio, horaInicio, tecnicoAsociado, remitente, destinatario, origen, destino, observaciones } = solicitud;
+    const operario = "Roberto Gomez"
+    const { idReserva, tipoServicio, horaInicio, remitente, destinatario, origen, destino, observaciones } = solicitud;
     return (
         <div className="final-solicitud">
             <div className="final-titulo">
@@ -63,8 +47,8 @@ function FinalSolicitud({previousStop, solicitud}) {
                 <textarea id="mensaje" name="mensaje" rows="4" cols="40" readOnly>{observaciones}</textarea>
             </div>
             <div className="final-tecnico">
-                <h3>Técnico asociado</h3>
-                <p>{tecnicoAsociado}</p>
+                <h3>Operario asociado</h3>
+                <p>{operario}</p>
             </div>
             <div className="final-boton">
                 <button className="btn">Finalizar</button>
