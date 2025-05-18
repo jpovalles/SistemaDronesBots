@@ -20,7 +20,8 @@ function SolicitarServicio() {
         destinatario: "",
         origen: "",
         destino: "",
-        observaciones: ""
+        observaciones: "",
+        dispositivo: ""
     });
 
     const handleNextStep = () => {

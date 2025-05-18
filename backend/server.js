@@ -29,12 +29,12 @@ app.listen(PORT, () => {
 
 // CRUD reservas
 app.post('/reservas', async (req, res) => {
-    const { horaInicio, remitente, destinatario, origen, destino, observaciones } = req.body;
+    const { horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo} = req.body;
     const [fecha, hora] = horaInicio.split("T");
     try {
         const result = await pool.query(
-            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [ remitente, destinatario, fecha, hora, destino, origen, observaciones]
+            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [ remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo]
         );
         res.status(201).json({ message: 'Reserva creada' });
     } catch (error) {
@@ -105,5 +105,36 @@ app.post("/login", async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor", error });
+    }
+});
+
+// Obtener dispositivo disponible
+app.get('/dispositivo', async (req, res) => {
+    const { fecha, hora } = req.query;
+    if (!fecha || !hora) {
+        return res.status(400).json({ message: "Fecha y hora son requeridos" });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT * FROM devices WHERE estado = $1',
+            [1]
+        );
+        if (result.rows.length === 0) {
+            return res.status(200).json({message: "No hay dispositivos operativos"}); // No se encontró el dispositivo
+        }
+
+        for (let i = 0; i < result.rows.length; i++) {
+            const idDispositivo = result.rows[i].id;
+            const reservas = await pool.query('select * from reserva where fecha = $1 and hora = $2 and dispositivo = $3', [fecha, hora, idDispositivo]);
+
+            if (reservas.rows.length === 0) {
+                return res.status(200).json({device: result.rows[i], message:""}); // Dispositivo disponible
+            }
+
+        }
+        res.status(200).json({message: "No hay dispositivos disponibles en ese horario"}); 
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los dispositivos' });
     }
 });

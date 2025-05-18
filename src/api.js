@@ -25,7 +25,6 @@ export async function verificarMulta({ idRemitente }) {
     }
 }
 
-
 // obtener clientes
 export async function obtenerCliente({ idcliente }) {
     const response = await fetch(`${API_URL}/clientes/${idcliente}`, {
@@ -48,5 +47,11 @@ export async function login(usuario, clave){
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({usuario, clave}),
     });
+    return response.json();
+}
+
+// obtener dispositivo disponible
+export async function obtenerDispositivoDisponible(fecha, hora){
+    const response = await fetch(`${API_URL}/dispositivo?fecha=${fecha}&hora=${hora}`);
     return response.json();
 }

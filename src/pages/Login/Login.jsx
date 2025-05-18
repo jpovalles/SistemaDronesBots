@@ -43,7 +43,7 @@ function Login() {
             if(data.rol === 1) {
                 setStatusColor("#58cf39");
                 setTimeout(() => navigate("/administrador/"), 1000);
-            }else if(data.rol === 0){
+            }else if(data.rol === 2){
                 setStatusColor("#58cf39");
                 setTimeout(() => navigate("/operario/"), 1000);
             }else{

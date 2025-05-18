@@ -45,9 +45,7 @@ function NavbarOperario({}){
                     <p><strong>Nombre: </strong>{nombreUser}</p>
                     <p><strong>Usuario: </strong>{username}</p>
                     <p><strong>Rol: </strong> {rolUser}</p>
-                    <p className="user-menu-separator">
-                        <hr/>
-                    </p>
+                    <hr/>
                     <button className="logout-btn" onClick={() => handleLogout()}>Cerrar sesión</button>
                 </div>
             )}

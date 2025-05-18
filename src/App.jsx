@@ -13,6 +13,7 @@ import GestionarDisp from './pages/admin/GestionarDisp';
 import ReporteServicios from './pages/admin/ReporteServicios';
 import VideosServicios from './pages/admin/VideosServicios';
 import InventarioRobots from './pages/admin/InventarioRobots';
+import ProtectedRoute from './pages/ProtectedRoute';
 import './App.css'
 
 function App() {
@@ -21,18 +22,19 @@ function App() {
     <>  
         <Routes>
           <Route path="/" element={<Login/>}/>
-          <Route path="/operario/" element={<LayoutOperario Opcion={SolicitarServicio}/>}/>
-          <Route path="/operario/solicitarServicio" element={<LayoutOperario Opcion={SolicitarServicio}/>}/>
-          <Route path="/operario/solicitudes" element={<LayoutOperario Opcion={Pedidos}/>}/>
-          <Route path="/operario/pedidosActivos" element={<LayoutOperario Opcion={PedidosActivos}/>}/>
-          <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
-          <Route path="/administrador/gestionarUsuarios" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
-          <Route path="/administrador/gestionarDispositivos" element={<LayoutAdmin Opcion={GestionarDisp}/>}/>
-          <Route path="/administrador/reportes" element={<LayoutAdmin Opcion={ReporteServicios}/>}/>
-          <Route path="/administrador/videos" element={<LayoutAdmin Opcion={VideosServicios}/>}/>
-          <Route path="/administrador/robots" element={<LayoutAdmin Opcion={InventarioRobots}/>}/>
-          <Route path="/operario/robots" element={<LayoutOperario Opcion={InventarioRobots}/>}/>
-
+          <Route element={<ProtectedRoute/>}>          
+            <Route path="/operario/" element={<LayoutOperario Opcion={SolicitarServicio}/>}/>
+            <Route path="/operario/solicitarServicio" element={<LayoutOperario Opcion={SolicitarServicio}/>}/>
+            <Route path="/operario/solicitudes" element={<LayoutOperario Opcion={Pedidos}/>}/>
+            <Route path="/operario/pedidosActivos" element={<LayoutOperario Opcion={PedidosActivos}/>}/>
+            <Route path="/administrador/" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
+            <Route path="/administrador/gestionarUsuarios" element={<LayoutAdmin Opcion={GestionarUsuarios}/>}/>
+            <Route path="/administrador/gestionarDispositivos" element={<LayoutAdmin Opcion={GestionarDisp}/>}/>
+            <Route path="/administrador/reportes" element={<LayoutAdmin Opcion={ReporteServicios}/>}/>
+            <Route path="/administrador/videos" element={<LayoutAdmin Opcion={VideosServicios}/>}/>
+            <Route path="/administrador/robots" element={<LayoutAdmin Opcion={InventarioRobots}/>}/>
+            <Route path="/operario/robots" element={<LayoutOperario Opcion={InventarioRobots}/>}/>
+          </Route>
         </Routes>
     </>
   )

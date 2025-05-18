@@ -5,8 +5,9 @@ import "./FinalSolicitud.css";
 
 function FinalSolicitud({previousStop, solicitud}) {
 
-    const operario = "Roberto Gomez"
-    const { horaInicio, remitente, destinatario, origen, destino, observaciones } = solicitud;
+    const operario = localStorage.getItem("usuario_actual")
+    const { horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo } = solicitud;
+    console.log(solicitud);
 
     const [fecha, hora] = horaInicio.split("T");
 
@@ -66,6 +67,11 @@ function FinalSolicitud({previousStop, solicitud}) {
             <div>
                 <h3>Operario asociado</h3>
                 <p>{operario}</p>
+            </div>
+            <div>
+                <h3>Dispositivo asociado</h3>
+                <p>{dispositivo.id}</p>
+                <p>{dispositivo.nombre}</p>
             </div>
             <div className="final-boton">
                 <button className="btn">Finalizar</button>

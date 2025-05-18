@@ -131,3 +131,10 @@ textarea::-webkit-scrollbar-thumb:hover {
 border: 2px solid #70cbea;
 cursor: pointer;
 }
+
+/*
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+    */
