@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5000';
 
 // CRUD reservas
 export async function agregarReserva({ horaInicio, remitente, destinatario, origen, destino, observaciones }){
@@ -39,4 +39,14 @@ export async function obtenerCliente({ idcliente }) {
     }else {
         throw new Error("Error obteniendo cliente");
     }
+}
+
+// login
+export async function login(usuario, clave){
+    const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({usuario, clave}),
+    });
+    return response.json();
 }

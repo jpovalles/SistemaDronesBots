@@ -28,7 +28,7 @@ app.listen(PORT, () => {
 
 
 // CRUD reservas
-app.post('/api/reservas', async (req, res) => {
+app.post('/reservas', async (req, res) => {
     const { horaInicio, remitente, destinatario, origen, destino, observaciones } = req.body;
     const [fecha, hora] = horaInicio.split("T");
     try {
@@ -44,7 +44,7 @@ app.post('/api/reservas', async (req, res) => {
 });
 
 // Verificar multa
-app.get('/api/multas/:idRemitente', async (req, res) => {
+app.get('/multas/:idRemitente', async (req, res) => {
     const { idRemitente } = req.params;
     try {
         const result = await pool.query(
@@ -67,7 +67,7 @@ app.get('/api/multas/:idRemitente', async (req, res) => {
 
 
 // obtener cliente
-app.get('/api/clientes/:idcliente', async (req, res) => {
+app.get('/clientes/:idcliente', async (req, res) => {
     const { idcliente } = req.params;
     try {
         const result = await pool.query(
@@ -81,5 +81,29 @@ app.get('/api/clientes/:idcliente', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener los clientes' });
+    }
+});
+
+// Autenticación de usuarios
+app.post("/login", async (req, res) => {
+    const { usuario, clave } = req.body;
+
+    try {
+        const result = await pool.query("SELECT * FROM users WHERE nombre_usuario = $1", [usuario]);
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: "Usuario no encontrado" });
+        }
+
+        const user = result.rows[0];
+
+        if (user.contraseña !== clave) {
+            return res.status(401).json({ message: "Contraseña incorrecta" });
+        }
+        
+        res.json({ message: "Login exitoso", token:true, rol:user.rol, nombre: user.nombre, username: user.nombre_usuario});
+
+    } catch (error) {
+        res.status(500).json({ message: "Error en el servidor", error });
     }
 });

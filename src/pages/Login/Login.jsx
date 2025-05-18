@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { login } from '../../api';
+
 import './Login.css';
 
 function Login() {
@@ -16,11 +19,12 @@ function Login() {
 
     const navigate = useNavigate();
 
+    /*
     useEffect(() => {
         localStorage.removeItem("token");  // Elimina el token de autenticación
         localStorage.removeItem("rol");    // Elimina el rol del usuario
     }, [])
-    
+    */
     
 
     const handleLogin = async  (e) => {
@@ -38,10 +42,10 @@ function Login() {
             
             if(data.rol === 1) {
                 setStatusColor("#58cf39");
-                setTimeout(() => navigate("/admin"), 1000);
+                setTimeout(() => navigate("/administrador/"), 1000);
             }else if(data.rol === 0){
                 setStatusColor("#58cf39");
-                setTimeout(() => navigate("/vendedor/"), 1000);
+                setTimeout(() => navigate("/operario/"), 1000);
             }else{
                 setMensaje("Rol no reconocido");
                 setStatusColor("#ffcc00");
@@ -81,7 +85,7 @@ function Login() {
                 <h2 className="ingresar-cred">Ingresa con tus credenciales para continuar</h2>
             </div>
             <div className="form_container">
-                <form >
+                <form onSubmit={handleLogin}>
                     <p>Usuario:</p>
                     <input className="user" type="text" required placeholder="Ingrese su usuario" disabled={isBlocked} onChange={(e) => setUsuario(e.target.value)}/>
 
