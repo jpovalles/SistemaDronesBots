@@ -1,13 +1,21 @@
-import {React, useState} from "react";
-import { useNavigate } from 'react-router-dom';
-import {verificarMulta} from "../../../api";
+import React, { useState, useEffect} from "react";
+
+import {verificarMulta, obtenerCliente} from "../../../api";
 
 function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolicitud}) {
     const [codigoRem, setCodigoRem] = useState(solicitud.remitente);
     const [codigoDest, setCodigoDest] = useState(solicitud.destinatario);
+    const [fechaReserva, setFechaReserva] = useState(solicitud.horaInicio);
 
-    const fechaPorDefecto = "2025-01-01T07:00";
-    const [hora, setHora] = useState(fechaPorDefecto);
+    const [minDateTime, setMinDateTime] = useState("");
+
+    useEffect(() => {
+        const now = new Date();
+        now.setSeconds(0, 0); // Eliminar segundos y milisegundos
+    
+        const localISOTime = now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+        setMinDateTime(localISOTime);
+    }, []);
     
 
     const handleChange = (setCodigo) => (e) => {
@@ -31,6 +39,23 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
             return;
         }
 
+        const cliente = await obtenerCliente({ idcliente: codigoRem });
+        console.log(cliente);
+        if (!cliente) {
+            showAlert("El remitente no existe.");
+            alertaEstado("error");
+            return;
+        }
+
+
+        const clienteDest = await obtenerCliente({ idcliente: codigoDest });
+        console.log(clienteDest);
+        if (!clienteDest) {
+            showAlert("El destinatario no existe.");
+            alertaEstado("error");
+            return;
+        }
+
         const multa = await verificarMulta({ idRemitente: codigoRem });
         console.log(multa);
         if (multa) {
@@ -46,7 +71,7 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
 
         setSolicitud(prev => ({
             ...prev,
-            horaInicio: fechaPorDefecto,
+            horaInicio: fechaReserva,
             remitente: codigoRem,
             destinatario: codigoDest
         }));
@@ -69,7 +94,7 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
 
             <div className="form-group">
                 <label for="hora">Hora del servicio</label>
-                <input type="datetime-local" id="hora" placeholder="00 : 00 am" defaultValue={fechaPorDefecto} step="1800" onChange={e => setHora(e.target.value)} required/>
+                <input type="datetime-local" id="hora" placeholder="00 : 00 am" defaultValue={fechaReserva ? fechaReserva : minDateTime} min={minDateTime} step="1800" onChange={e => setFechaReserva(e.target.value)} required/>
             </div>
 
             <button className="btn" onClick={() => handleSubmit()}>Siguiente</button>

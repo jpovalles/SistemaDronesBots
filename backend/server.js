@@ -51,7 +51,7 @@ app.get('/api/multas/:idRemitente', async (req, res) => {
             'SELECT * FROM multas WHERE idcliente = $1',
             [idRemitente]
         );
-        console.log(result.rows);
+        
         if (result.rows.length > 0) {
             res.status(200).json({
                 mensaje: `El remitente tiene una multa activa por valor de $${result.rows[0].valor}`,
@@ -62,5 +62,24 @@ app.get('/api/multas/:idRemitente', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al verificar la multa' });
+    }
+});
+
+
+// obtener cliente
+app.get('/api/clientes/:idcliente', async (req, res) => {
+    const { idcliente } = req.params;
+    try {
+        const result = await pool.query(
+            'SELECT * FROM clients where id = $1', 
+            [idcliente]
+        );
+        if (result.rows.length === 0) {
+            return res.status(204).send(); // No se encontró el cliente
+        }
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los clientes' });
     }
 });

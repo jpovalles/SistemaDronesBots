@@ -24,3 +24,19 @@ export async function verificarMulta({ idRemitente }) {
         throw new Error("Error verificando multa");
     }
 }
+
+
+// obtener clientes
+export async function obtenerCliente({ idcliente }) {
+    const response = await fetch(`${API_URL}/clientes/${idcliente}`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+    });
+    if (response.status === 200) {
+        return response.json(); 
+    } else if (response.status === 204) {
+        return null; 
+    }else {
+        throw new Error("Error obteniendo cliente");
+    }
+}
