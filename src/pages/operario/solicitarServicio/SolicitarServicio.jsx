@@ -33,6 +33,20 @@ function SolicitarServicio() {
         setStep((prevStep) => prevStep - 1);
     }
 
+    const restartWizard = () => {
+        setStep(1);
+        setSolicitud({
+            fechaInicio: "",
+            horaInicio: "",
+            remitente: "",
+            destinatario: "",
+            origen: "",
+            destino: "",
+            observaciones: "",
+            dispositivo: ""
+        });
+    }
+
     return(
         <div className="solicitarServicio">
             <div className="left-panel">
@@ -43,7 +57,7 @@ function SolicitarServicio() {
             <div className="right-panel">
                 {step === 1 && <SolicitarFirst nextStep={handleNextStep} showAlert={setShowAlert} alertaEstado={setAlertaEstado} solicitud={solicitud} setSolicitud={setSolicitud}/>}
                 {step === 2 && <SolicitarSecond nextStep={handleNextStep} previousStop={handlePreviousStep} showAlert={setShowAlert} alertaEstado={setAlertaEstado} solicitud={solicitud} setSolicitud={setSolicitud}/>}
-                {step === 3 && <FinalSolicitud previousStop={handlePreviousStep} solicitud={solicitud}/>}
+                {step === 3 && <FinalSolicitud previousStop={handlePreviousStep} solicitud={solicitud} setSolicitud={setSolicitud} restartWizard={restartWizard}/>}
             </div>
         </div>
     )

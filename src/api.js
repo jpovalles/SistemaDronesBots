@@ -1,11 +1,11 @@
 const API_URL = 'http://localhost:5000';
 
 // CRUD reservas
-export async function agregarReserva({ horaInicio, remitente, destinatario, origen, destino, observaciones }){
+export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo }){
     const response = await fetch(`${API_URL}/reservas`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ horaInicio, remitente, destinatario, origen, destino, observaciones}), 
+        body: JSON.stringify({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo}), 
     });
     return response.json(); 
 }

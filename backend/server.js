@@ -29,12 +29,11 @@ app.listen(PORT, () => {
 
 // CRUD reservas
 app.post('/reservas', async (req, res) => {
-    const { horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo} = req.body;
-    const [fecha, hora] = horaInicio.split("T");
+    const { fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo} = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-            [ remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo]
+            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo, estado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+            [ remitente, destinatario, fechaInicio, horaInicio, destino, origen, observaciones, dispositivo, 1]
         );
         res.status(201).json({ message: 'Reserva creada' });
     } catch (error) {

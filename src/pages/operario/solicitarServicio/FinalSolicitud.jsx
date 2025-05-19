@@ -3,17 +3,15 @@ import { obtenerCliente } from "../../../api";
 
 import "./FinalSolicitud.css";
 
-function FinalSolicitud({previousStop, solicitud}) {
+import {agregarReserva} from "../../../api";
+
+function FinalSolicitud({previousStop, solicitud, restartWizard}) {
 
     const operario = localStorage.getItem("usuario_actual")
-    const { horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo } = solicitud;
-    console.log(solicitud);
-
-    const [fecha, hora] = horaInicio.split("T");
+    const {fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo } = solicitud;
 
     const [remitenteData, setRemitenteData] = useState(null);
     const [destinoData, setDestinoData] = useState(null);
-
 
 
     useEffect(() => {
@@ -32,6 +30,30 @@ function FinalSolicitud({previousStop, solicitud}) {
         fetchClientData();
     }, [remitente, destinatario]);
 
+    const handleSubmit = async () => {
+        try {
+            const response = await agregarReserva({
+                fechaInicio: fechaInicio,
+                horaInicio: horaInicio,
+                remitente: remitente,
+                destinatario: destinatario,
+                origen: origen,
+                destino: destino,
+                observaciones: observaciones,
+                dispositivo: dispositivo.id
+            });
+
+            if (response) {
+                alert("Reserva creada exitosamente");
+                restartWizard();
+            } else {
+                alert("Error al crear la reserva");
+            }
+        } catch (error) {
+            console.error("Error creating reservation:", error);
+        }
+    }
+
     return (
         <div className="final-solicitud">
             <div className="final-titulo">
@@ -48,8 +70,8 @@ function FinalSolicitud({previousStop, solicitud}) {
             </div>
             <div>
                 <h3>Hora de inicio</h3>
-                <p>{fecha}</p>
-                <p>{hora}</p>
+                <p>{fechaInicio}</p>
+                <p>{horaInicio}</p>
             </div>
             <div>
                 <h3>Destinatario</h3>
@@ -74,7 +96,7 @@ function FinalSolicitud({previousStop, solicitud}) {
                 <p>{dispositivo.nombre}</p>
             </div>
             <div className="final-boton">
-                <button className="btn">Finalizar</button>
+                <button className="btn" onClick={handleSubmit}>Finalizar</button>
                 <button className="btn" onClick={() => previousStop()}>Atrás</button>
             </div>
         </div>
