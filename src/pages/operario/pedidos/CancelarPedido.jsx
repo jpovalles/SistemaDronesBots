@@ -1,6 +1,6 @@
 import React from "react";
 
-import { eliminarReserva } from "../../../api";
+import { eliminarReserva, agregarMulta } from "../../../api";
 
 import './CancelarPedido.css';
 
@@ -10,6 +10,7 @@ function CancelarPedido({idPedido, idusuario, usuario, multa, setShowCancel, onC
     
     const handleCancel = async () => {
         try {
+            multa && await handleMulta();
             const response = await eliminarReserva(idPedido);
             if (response) {
                 alert("Reserva cancelada exitosamente");
@@ -19,6 +20,19 @@ function CancelarPedido({idPedido, idusuario, usuario, multa, setShowCancel, onC
             }
         } catch (error) {
             console.error("Error cancelando reserva:", error);
+        }
+    }
+
+    const handleMulta = async () => {
+        try {
+            const response = await agregarMulta({ idRemitente: idusuario, multa });
+            if (response) {
+                alert("Multa agregada exitosamente");
+            } else {
+                alert("Error al agregar la multa");
+            }
+        } catch (error) {
+            console.error("Error agregando multa:", error);
         }
     }
 

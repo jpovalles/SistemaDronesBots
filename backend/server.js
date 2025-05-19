@@ -74,6 +74,21 @@ app.get('/reservas/estado/:estado', async (req, res) => {
     }
 });
 
+// agregar multa
+app.post('/multas', async (req, res) => {
+    const { idRemitente, multa } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO multas (idcliente, valor) VALUES ($1, $2)',
+            [idRemitente, multa]
+        );
+        res.status(201).json({ message: 'Multa creada' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear la multa' });
+    }
+});
+
 // Eliminar reserva
 app.delete("/reservas/:idReserva", async (req, res) => {
     try{

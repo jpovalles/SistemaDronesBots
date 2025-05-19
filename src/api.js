@@ -29,6 +29,16 @@ export async function eliminarReserva(idReserva) {
     return data;
 }
 
+// agregar multa
+export async function agregarMulta({ idRemitente, multa }) {
+    const response = await fetch(`${API_URL}/multas`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ idRemitente, multa }),
+    });
+    return response.json();
+}
+
 // verificar multa
 export async function verificarMulta({ idRemitente }) {
     const response = await fetch(`${API_URL}/multas/${idRemitente}`, {
