@@ -160,9 +160,9 @@ app.put('/usuarios/:user', async(req, res) => {
         const {nombre_usuario, contraseña, nombre, rol} = req.body;
 
         const existe = await pool.query(
-            "SELECT 1 FROM users WHERE nombre_usuario = $1", [user]
-        )
-        if(existe.rowCount > 0 && nombre_usuario !== user){
+            "SELECT 1 FROM users WHERE nombre_usuario = $1 AND nombre_usuario <> $2", [nombre_usuario, user]
+        );
+        if(existe.rowCount > 0){
             return res.status(409).json({success: false, message: "El usuario ya existe"})
         }
         await pool.query(
@@ -200,6 +200,86 @@ app.post("/usuarios", async (req, res) =>{
 app.get("/roles", async(req, res) => {
     try{
         const result = await pool.query("SELECT * FROM roles;");
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})
+
+//obtener Dispositivos
+app.get("/dispositivos", async(req, res) => {
+    try{
+        const result = await pool.query(`SELECT dev.id AS id, dev.capacidad AS capacidad, type.tipo AS tipo, est.estado AS estado, dev.fecha AS fecha, dev.nivel_bateria AS nivel_bateria, dev.tipo AS id_tipo
+            FROM devices AS dev
+            INNER JOIN device_type AS type
+            ON dev.tipo = type.id
+            INNER JOIN estado_device AS est
+            ON dev.estado = est.id;`);
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})
+
+//Editar dispositivos
+app.put('/dispositivos/:idn', async(req, res) => {
+    try{
+        const {idn} = req.params;
+        const id = parseInt(idn, 10);
+        const { capacidad, tipo, estado, fecha, nivel_bateria} = req.body;
+
+        const existe = await pool.query(
+            "SELECT 1 FROM devices WHERE id = $1", [id]
+        )
+        if(existe.rowCount === 0){
+            return res.status(409).json({success: false, message: "Dispositivo no encontrado"})
+        }
+        await pool.query(
+            "UPDATE devices SET capacidad = $1, tipo = $2, estado = $3, fecha = $4, nivel_bateria = $5 WHERE id = $6 RETURNING *", [capacidad, tipo, estado, fecha, nivel_bateria, id]);
+        res.status(200).json({success: true, message: "Dispositivo actualizado"})
+    }catch(e){
+        res.status(500).json({success: false, message: "Error en la edición"});
+    }
+});
+
+//Eliminar dispositivos
+app.delete("/dispositivos/:id", async (req, res) => {
+    try{
+        const {id} = req.params;
+        await pool.query("DELETE FROM users WHERE nombre_usuario = $1", [id]);
+        res.json({success: true, message: "Dispositivo eliminado"})
+    }catch(e){
+        res.status(500).json({ success: false, message: 'Error'})
+    }
+})
+
+//Agregar dispositivos
+app.post("/dispositivos", async (req, res) =>{
+    const {capacidad, tipo, estado, fecha, nivel_bateria} = req.body;
+    try{
+        const result = await pool.query(
+            "INSERT INTO devices (capacidad, tipo, estado, fecha, nivel_bateria) VALUES ($1, $2, $3, $4, $5) RETURNING *", [capacidad, tipo, estado, fecha, nivel_bateria]
+        );
+        res.status(200).json({success: true, message: "Usuario registrado"});
+    }catch (e){
+        res.status(500).json({error: e.message})
+    }
+})
+
+//Obtener estados
+app.get("/estados", async(req, res) => {
+    try{
+        const result = await pool.query("SELECT * FROM estado_device;");
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})
+
+//Obtener tipos de dispositivo
+app.get("/tipos", async(req, res) => {
+    try{
+        const result = await pool.query("SELECT * FROM device_type;");
         res.json(result.rows);
     }catch(e) {
         res.status(500).json({error: e.message})

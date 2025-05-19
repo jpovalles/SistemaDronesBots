@@ -100,3 +100,54 @@ export async function obtenerRoles(){
     const response = await fetch(`${API_URL}/roles`);
     return response.json();
 }
+
+//Obtener dispositivos
+export async function obtenerDispositivos(){
+    const response = await fetch(`${API_URL}/dispositivos`);
+    return response.json();
+}
+
+//Actualizar dispositivos
+export async function actualizarDispositivo(idn, capacidad, tipo, estado, fecha, nivel_bateria){
+    console.log(`${API_URL}/dispositivos/${idn}`)
+    const response = await fetch(`${API_URL}/dispositivos/${idn}`, {
+        method: "PUT", 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ capacidad, tipo, estado, fecha, nivel_bateria}),
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+//Borrar dispositivos
+export async function eliminarDispositivos(id){
+    const response = await fetch(`${API_URL}/dispositivos/${id}`, {
+        method: "DELETE",
+    });
+    const data = await response.json();
+    return data;
+}
+
+//Agregar dispositivos
+export async function agregarDispositivo(capacidad, tipo, estado, fecha, nivel_bateria){
+    const response = await fetch(`${API_URL}/dispositivos`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({capacidad, tipo, estado, fecha, nivel_bateria}),
+    })
+    const data = await response.json();
+    return data;
+}
+
+//Obtener estados
+export async function obtenerEstados(){
+    const response = await fetch(`${API_URL}/estados`);
+    return response.json();
+}
+
+//Obtener tipos
+export async function obtenerTipos(){
+    const response = await fetch(`${API_URL}/tipos`);
+    return response.json();
+}

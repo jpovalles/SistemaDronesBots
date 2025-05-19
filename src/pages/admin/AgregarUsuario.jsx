@@ -60,7 +60,7 @@ function AgregarUsuario(){
                     <input onChange={cambios} value={formData.nombre} type="text" name="nombre" placeholder='Escribe el nombre' className='form' required/>
                     <h3 className='nombres'>Rol</h3>
                     <select className='form' style={{width: '51%'}} value={formData.rol} onChange={e => setFormData( {...formData, rol: parseInt(e.target.value)})}>
-                         <option value="" disabled>Seleccione un rol</option>
+                        <option value="" disabled>Seleccione un rol</option>
                         {roles.map(role => (
                             <option key={role.id} value={role.id}>{role.nombre_rol}</option>
                         ))}
