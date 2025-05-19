@@ -96,7 +96,7 @@
   color: #2e7d32;
 }
 
-.estado.mantenimiento {
+.estado.en-mantenimiento {
   background: #fff3cd;
   color: #856404;
 }
