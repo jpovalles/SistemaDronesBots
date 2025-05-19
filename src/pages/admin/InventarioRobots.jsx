@@ -1,71 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './InventarioRobots.css';
-
-const dispositivosDataOriginal = [
-  {
-    id: "001",
-    tipo: 'Robot',
-    numeroSerie: 'ROB-2025-001',
-    estado: 'Operativo',
-    bateria: 85,
-    ultimoServicio: '12/05/2025',
-    fechaAdquisicion: '10/05/2025',
-    horasUso: 127,
-    serviciosRealizados: 47,
-    distRecorrida: 10
-  },
-  {
-    id: "002",
-    tipo: 'Dron',
-    numeroSerie: 'DRN-2025-002',
-    estado: 'Mantenimiento',
-    bateria: 45,
-    ultimoServicio: '28/04/2025',
-    fechaAdquisicion: '01/04/2025',
-    horasUso: 83,
-    serviciosRealizados: 21, 
-    distRecorrida: 7
-  },
-  {
-    id: "003",
-    tipo: 'Dron',
-    numeroSerie: 'DRN-2025-003',
-    estado: 'Fuera de servicio',
-    bateria: 0,
-    ultimoServicio: '26/01/2025',
-    fechaAdquisicion: '29/01/2025',
-    horasUso: 0,
-    serviciosRealizados: 15,
-    distRecorrida: 12
-  },
-  {
-    id: "004",
-    tipo: 'Robot',
-    numeroSerie: 'ROB-2025-004',
-    estado: 'Operativo',
-    bateria: 25,
-    ultimoServicio: '12/03/2025',
-    fechaAdquisicion: '12/03/2025',
-    horasUso: 94,
-    serviciosRealizados: 36,
-    distRecorrida: 8
-  },
-  {
-    id: "005",
-    tipo: 'Dron',
-    numeroSerie: 'DRN-2025-005',
-    estado: 'Operativo',
-    bateria: 90,
-    ultimoServicio: '14/05/2025',
-    fechaAdquisicion: '20/03/2025',
-    horasUso: 143,
-    serviciosRealizados: 52,
-    distRecorrida: 3
-  }
-];
+import { obtenerDispositivos } from '../../api';
 
 function InventarioDispositivos(){ 
-  const [dispositivos, setDispositivos] = useState(dispositivosDataOriginal);
+  const [dispositivos, setDispositivos] = useState([]);
   
   const [tipo, setTipo] = useState('Todos');
   const [estado, setEstado] = useState('Todos');
@@ -73,6 +11,19 @@ function InventarioDispositivos(){
   const [busqueda, setBusqueda] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
+
+  const formatoFecha = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleDateString("es-ES")
+  }
+
+  useEffect(() => {
+    async function listarDispositivos(){
+      const dato = await obtenerDispositivos();
+      setDispositivos(dato)
+    }
+    listarDispositivos();
+  }, [])
 
   const abrirModal = (dispositivo) => {
     setDispositivoSeleccionado(dispositivo);
@@ -103,9 +54,8 @@ function InventarioDispositivos(){
       const matchEstado = estado === 'Todos' || d.estado === estado;
       const matchBateria =
         bateria === 'Cualquiera' ||
-        (bateria.includes('-') && d.bateria >= parseInt(bateria.split('-')[0]) && d.bateria < parseInt(bateria.split('-')[1]));
-      const matchBusqueda =
-        d.numeroSerie.toLowerCase().includes(busqueda.toLowerCase()) || d.id.toString().includes(busqueda);
+        (bateria.includes('-') && d.nivel_bateria >= parseInt(bateria.split('-')[0]) && d.nivel_bateria <= parseInt(bateria.split('-')[1]));
+      const matchBusqueda = d.id.toString().includes(busqueda);
 
       return matchTipo && matchEstado && matchBateria && matchBusqueda;
     });
@@ -127,17 +77,17 @@ function InventarioDispositivos(){
         <select value={estado} onChange={(e) => setEstado(e.target.value)}>
             <option value="Estado">Estado</option>
             <option value="Operativo">Operativo</option>
-            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="En mantenimiento">En mantenimiento</option>
             <option value="Fuera de servicio">Fuera de servicio</option>
         </select>
 
         <select value={bateria} onChange={(e) => setBateria(e.target.value)}>
             <option value="Bateria">Nivel de Batería</option>
             <option value="0-20">0% - 20%</option>
-            <option value="20-40">20% - 40%</option>
-            <option value="40-60">40% - 60%</option>
-            <option value="60-80">60% - 80%</option>
-            <option value="80-100">80% - 100%</option>
+            <option value="21-40">20% - 40%</option>
+            <option value="41-60">40% - 60%</option>
+            <option value="61-80">60% - 80%</option>
+            <option value="81-100">80% - 100%</option>
         </select>
 
         <button className='btn-aplicar' onClick={() => {}}>Aplicar</button>
@@ -154,7 +104,7 @@ function InventarioDispositivos(){
         <span>Robots: {dispositivos.filter(d => d.tipo === 'Robot').length}</span>
         <span>Drones: {dispositivos.filter(d => d.tipo === 'Dron').length}</span>
         <span>Operativos: {dispositivos.filter(d => d.estado === 'Operativo').length}</span>
-        <span>En mantenimiento: {dispositivos.filter(d => d.estado === 'Mantenimiento').length}</span>
+        <span>En mantenimiento: {dispositivos.filter(d => d.estado === 'En mantenimiento').length}</span>
         <span>Fuera de servicio: {dispositivos.filter(d => d.estado === 'Fuera de servicio').length}</span>
         </div>
 
@@ -173,7 +123,6 @@ function InventarioDispositivos(){
             <tr>
             <th>ID</th>
             <th>Tipo</th>
-            <th>Número de serie</th>
             <th>Estado</th>
             <th>Batería</th>
             <th>Último servicio</th>
@@ -186,11 +135,10 @@ function InventarioDispositivos(){
             <tr key={d.id}>
                 <td>{d.id}</td>
                 <td>{d.tipo}</td>
-                <td>{d.numeroSerie}</td>
                 <td><span className={`estado ${d.estado.replace(/ /g, '-').toLowerCase()}`}>{d.estado}</span></td>
-                <td><span className="bateria">{d.bateria}%</span></td>
-                <td>{d.ultimoServicio}</td>
-                <td>{d.fechaAdquisicion}</td>
+                <td><span className="bateria">{d.nivel_bateria}%</span></td>
+                <td>{"19/5/2025"}</td>
+                <td>{formatoFecha(d.fecha)}</td>
                 <td>
                 <button onClick={() => abrirModal(d)} className="btn-lupa">🔍</button>
                 </td>
@@ -210,17 +158,16 @@ function InventarioDispositivos(){
             <div className="modal-detalle">
                 <div className="detalle-titulo">
                 <p><strong>{dispositivoSeleccionado.tipo === 'Robot' ? 'Robot de entrega - Campus Principal' : 'Dron de vigilancia - Sector Norte'}</strong></p>
-                <div className="bateria-circular">{dispositivoSeleccionado.bateria}%</div>
+                <div className="bateria-circular">{dispositivoSeleccionado.nivel_bateria}%</div>
                 </div>
                 <div className="detalle-info">
                 <p><strong>ID:</strong> {dispositivoSeleccionado.id}</p>
                 <p><strong>Tipo:</strong> {dispositivoSeleccionado.tipo}</p>
-                <p><strong>Número de serie:</strong> {dispositivoSeleccionado.numeroSerie}</p>
                 <p><strong>Estado:</strong> {dispositivoSeleccionado.estado}</p>
-                <p><strong>Batería:</strong> {dispositivoSeleccionado.bateria}%</p>
-                <p><strong>Horas de uso:</strong> {dispositivoSeleccionado.horasUso} horas</p>
+                <p><strong>Batería:</strong> {dispositivoSeleccionado.nivel_bateria}%</p>
+                <p><strong>Horas de uso:</strong> {"20"} horas</p>
                 <p><strong>Último servicio:</strong> {dispositivoSeleccionado.ultimoServicio}</p>
-                <p><strong>Adquisición:</strong> {dispositivoSeleccionado.fechaAdquisicion}</p>
+                <p><strong>Adquisición:</strong> {formatoFecha(dispositivoSeleccionado.fecha)}</p>
                 <p><strong>Servicios realizados:</strong> {dispositivoSeleccionado.serviciosRealizados}</p>
                 <p><strong>Distancia recorrida:</strong> {dispositivoSeleccionado.distRecorrida}</p>
                 </div>
