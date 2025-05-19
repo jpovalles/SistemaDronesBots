@@ -135,7 +135,7 @@ app.get('/dispositivo', async (req, res) => {
         res.status(200).json({message: "No hay dispositivos disponibles en ese horario"}); 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al obtener los dispositivos' });
+        res.status(500).json({ message: 'Error al obtener los dispositivos' });
     }
 });
 

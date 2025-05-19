@@ -5,11 +5,28 @@ import {verificarMulta, obtenerCliente, obtenerDispositivoDisponible} from "../.
 function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolicitud}) {
     const [codigoRem, setCodigoRem] = useState(solicitud.remitente);
     const [codigoDest, setCodigoDest] = useState(solicitud.destinatario);
-    const [fechaReserva, setFechaReserva] = useState(solicitud.horaInicio);
+    const [fechaReserva, setFechaReserva] = useState(solicitud.fechaInicio);
+    const [horaReserva, setHoraReserva] = useState(solicitud.horaInicio);
 
-    const now = new Date();
-    const dateOnly = now.toISOString().split("T")[0];
+    
+    const generateTimeOptions = () => {
+        const options = [];
+        const start = 8 * 60; // 8:00 AM en minutos
+        const end = 18 * 60;  // 6:00 PM en minutos
+        
+        for (let mins = start; mins <= end; mins += 20) {
+            const hours = Math.floor(mins / 60);
+            const minutes = mins % 60;
+            const label = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            options.push(label);
+        }
+        
+        return options;
+    };
 
+    const timeOptions = generateTimeOptions();
+    const today = new Date().toISOString().split('T')[0];
+    
     const handleChange = (setCodigo) => (e) => {
         const value = e.target.value;
         // Solo permitir números y máximo 7 caracteres
@@ -55,8 +72,8 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
             return;
         }
 
-        const [fecha, hora] = fechaReserva.split("T");
-        const dispositivo = await obtenerDispositivoDisponible(fecha, hora);
+        const dispositivo = await obtenerDispositivoDisponible(fechaReserva, horaReserva);
+        console.log(dispositivo);
         if (dispositivo.message) {
             showAlert(dispositivo.message);
             alertaEstado("error");
@@ -70,7 +87,8 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
 
         setSolicitud(prev => ({
             ...prev,
-            horaInicio: fechaReserva,
+            fechaInicio: fechaReserva,
+            horaInicio: horaReserva,
             remitente: codigoRem,
             destinatario: codigoDest,
             dispositivo: {id: dispositivo.device.id, nombre: dispositivo.device.nombre},
@@ -95,7 +113,14 @@ function SolicitarFirst({nextStep, showAlert, alertaEstado, solicitud, setSolici
 
             <div className="form-group">
                 <label for="hora">Hora del servicio</label>
-                <input type="datetime-local" id="hora" placeholder="00 : 00 am" defaultValue={fechaReserva ? fechaReserva : `${dateOnly}T00:00`} min={`${dateOnly}T00:00`} step="1200" onChange={e => setFechaReserva(e.target.value)} required/>
+                <input type="date" defaultValue={fechaReserva ? fechaReserva : ""}  onChange={e => setFechaReserva(e.target.value)} min={today} required/>
+                <select onChange={e => setHoraReserva(e.target.value)} value={horaReserva} required>
+                    {timeOptions.map((time) => (
+                        <option key={time} value={time}>
+                        {time}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <button className="btn" onClick={() => handleSubmit()}>Siguiente</button>

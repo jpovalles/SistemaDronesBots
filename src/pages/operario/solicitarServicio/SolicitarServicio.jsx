@@ -15,6 +15,7 @@ function SolicitarServicio() {
     const [step, setStep] = useState(1);
 
     const [solicitud, setSolicitud] = useState({
+        fechaInicio: "",
         horaInicio: "",
         remitente: "",
         destinatario: "",
