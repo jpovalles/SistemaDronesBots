@@ -42,6 +42,51 @@ app.post('/reservas', async (req, res) => {
     }
 });
 
+// Obtener reservas por estado
+app.get('/reservas/estado/:estado', async (req, res) => {
+    const estado = parseInt(req.params.estado);
+
+    try {
+        const result = await pool.query(
+        `SELECT 
+            r.remitente,
+            r.id,
+            u1.nombre AS remitente_nombre,
+            u2.nombre AS destinatario_nombre,
+            r.fecha,
+            r.hora,
+            r.origen,
+            r.destino,
+            r.observaciones,
+            r.dispositivo,
+            r.estado
+        FROM reserva r
+        JOIN clients u1 ON r.remitente = u1.id
+        JOIN clients u2 ON r.destinatario = u2.id
+        WHERE r.estado = $1`,
+        [estado]
+    );
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).json({ error: 'Error al obtener reservas' });
+    }
+});
+
+// Eliminar reserva
+app.delete("/reservas/:idReserva", async (req, res) => {
+    try{
+        const { idReserva } = req.params;
+        await pool.query("DELETE FROM reserva WHERE id = $1", [idReserva]);
+        res.json({succes: true, message: "Reserva eliminada"})
+    } catch(e){
+        res.status(500).json({ success: false, message: "Error"});
+    }
+})
+
+
+
 // Verificar multa
 app.get('/multas/:idRemitente', async (req, res) => {
     const { idRemitente } = req.params;
