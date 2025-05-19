@@ -71,6 +71,17 @@ th, td {
   text-align: center;
   font-size: 14 px;
 }
+
+.tabla select{
+  width: 70%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: white;
+  text-align: center;
+  font-size: 14 px;
+}
+
 .botones-edicion {
   height: 12px;
   padding: 12px;

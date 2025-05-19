@@ -138,3 +138,70 @@ app.get('/dispositivo', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener los dispositivos' });
     }
 });
+
+//Obtener usuarios
+app.get("/usuarios", async(req, res) => {
+    try{
+        const result = await pool.query(`SELECT users.nombre_usuario AS nombre_usuario, users.contraseña AS contraseña, users.nombre AS nombre, roles.nombre_rol AS rol
+            FROM users
+            INNER JOIN roles
+            ON users.rol = roles.id;`);
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})
+
+//Editar usuarios
+app.put('/usuarios/:user', async(req, res) => {
+    try{
+        const {user} = req.params;
+        
+        const {nombre_usuario, contraseña, nombre, rol} = req.body;
+
+        const existe = await pool.query(
+            "SELECT 1 FROM users WHERE nombre_usuario = $1", [user]
+        )
+        if(existe.rowCount > 0 && nombre_usuario !== user){
+            return res.status(409).json({success: false, message: "El usuario ya existe"})
+        }
+        await pool.query(
+            "UPDATE users SET nombre_usuario = $1, contraseña = $2, nombre = $3, rol = $4 WHERE nombre_usuario = $5 RETURNING *", [nombre_usuario, contraseña, nombre, rol, user]);
+        res.status(200).json({success: true, message: "Usuario actualizado"})
+    }catch(e){
+        res.status(500).json({success: false, message: "Error en la edición"});
+    }
+});
+
+app.delete("/usuarios/:user", async (req, res) => {
+    try{
+        const {user} = req.params;
+        await pool.query("DELETE FROM users WHERE nombre_usuario = $1", [user]);
+        res.json({success: true, message: "Usuario eliminado"})
+    }catch(e){
+        res.status(500).json({ success: false, message: 'Error'})
+    }
+})
+
+//Agregar usuarios
+app.post("/usuarios", async (req, res) =>{
+    const {nombre_usuario, contraseña, nombre, rol} = req.body;
+    try{
+        const result = await pool.query(
+            "INSERT INTO users (nombre_usuario, contraseña, nombre, rol) VALUES ($1, $2, $3, $4) RETURNING *", [nombre_usuario, contraseña, nombre, rol]
+        );
+        res.status(200).json({success: true, message: "Usuario registrado"});
+    }catch (e){
+        res.status(500).json({error: e.message})
+    }
+})
+
+//Obtener roles
+app.get("/roles", async(req, res) => {
+    try{
+        const result = await pool.query("SELECT * FROM roles;");
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})

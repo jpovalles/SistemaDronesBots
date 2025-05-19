@@ -62,10 +62,10 @@ function ModificarDisp(){
                             {editingDisp === device.id ? (
                                 <>
                                     <td>{device.id}</td>
-                                    <td><input value={editedData.tipo} onChange={e => setEditedData({...editedData, tipo: e.target.value})} /></td>
+                                    <td>{device.tipo}</td>
                                     <td><input value={editedData.capacidad} onChange={e => setEditedData({...editedData, capacidad: e.target.value})} /></td>
                                     <td><input value={editedData.estado} onChange={e => setEditedData({...editedData, estado: e.target.value})} /></td>
-                                    <td><input value={editedData.fecha} onChange={e => setEditedData({...editedData, fecha: e.target.value})} /></td>
+                                    <td>{device.estado}</td>
                                     <td>
                                         <button className='boton-texto guardar' onClick={handleSave}>Guardar</button>
                                         <button className='boton-texto cancelar' onClick={handleCancel}>Cancelar</button>

@@ -55,3 +55,48 @@ export async function obtenerDispositivoDisponible(fecha, hora){
     const response = await fetch(`${API_URL}/dispositivo?fecha=${fecha}&hora=${hora}`);
     return response.json();
 }
+
+//Obtener usuarios
+export async function obtenerUsuarios(){
+    const response = await fetch(`${API_URL}/usuarios`);
+    return response.json();
+}
+
+//Editar usuarios
+export async function actualizarUsuario(user, nombre_usuario, contraseña, nombre, rol){
+    console.log(`${API_URL}/usuarios/${user}`)
+    const response = await fetch(`${API_URL}/usuarios/${user}`, {
+        method: "PUT", 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({nombre_usuario, contraseña, nombre, rol}),
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+//Borrar usuarios
+export async function eliminarUsuario(user){
+    const response = await fetch(`${API_URL}/usuarios/${user}`, {
+        method: "DELETE",
+    });
+    const data = await response.json();
+    return data;
+}
+
+//Agregar usuarios
+export async function agregarUsuario(nombre_usuario, contraseña, nombre, rol){
+    const response = await fetch(`${API_URL}/usuarios`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({nombre_usuario, contraseña, nombre, rol}),
+    })
+    const data = await response.json();
+    return data;
+}
+
+//obtener roles
+export async function obtenerRoles(){
+    const response = await fetch(`${API_URL}/roles`);
+    return response.json();
+}
