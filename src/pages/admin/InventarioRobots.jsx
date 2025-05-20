@@ -19,18 +19,9 @@ function InventarioDispositivos(){
   const [dispositivoQR, setDispositivoQR] = useState(null);
   
   // Estado para almacenar la temperatura actual
-  const [temperatura, setTemperatura] = useState(() => {
-    // Intentar recuperar la temperatura guardada en localStorage
-    const temperaturaGuardada = localStorage.getItem('temperatura');
-    return temperaturaGuardada ? parseInt(temperaturaGuardada) : null;
-  });
-  
-  const [ultimaActualizacion, setUltimaActualizacion] = useState(() => {
-    return localStorage.getItem('ultimaActualizacionClima') || null;
-  });
-  
-  // Solo mostrar cargando si no hay temperatura guardada
-  const [cargandoClima, setCargandoClima] = useState(!localStorage.getItem('temperatura'));
+  const [temperatura, setTemperatura] = useState(null);
+  const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
+  const [cargandoClima, setCargandoClima] = useState(true);
 
   const abrirModalQR = (dispositivo) => {
     setDispositivoQR(dispositivo);
@@ -58,35 +49,24 @@ function InventarioDispositivos(){
 
   const manejarEscaneoQR = (datosQR) => {
     try {
-      const data = JSON.parse(datosQR);
     } catch (err) {
       console.error("QR inválido:", err);
       alert("❌ Código QR no válido.");
     }
   };
 
-  // Función para obtener la temperatura actual
   const obtenerTemperaturaActual = async () => {
-    // Si tenemos datos recientes (menos de 60 minutos), no actualizamos
-    const ahora = Date.now();
-    const ultimaActual = localStorage.getItem('ultimaActualizacionClima');
-    
-    if (ultimaActual && (ahora - parseInt(ultimaActual)) < 60 * 60 * 1000) {
-      // Los datos tienen menos de 1 hora, usamos los guardados
-      return;
-    }
-    
     setCargandoClima(true);
     try {
-      // Usando la API de OpenWeatherMap con la API key proporcionada
-      const apiKey = '438c8f3572bba0c7e2cc248f0bf688fd';
+      // Usar la misma estructura que en el ejemplo
+      const api = {
+        key: "438c8f3572bba0c7e2cc248f0bf688fd", // Mantener tu API key actual
+        base: "https://api.openweathermap.org/data/2.5/"
+      };
       
-      // Coordenadas de Cali, Colombia
-      const lat = 3.4516;
-      const lon = -76.5320;
-      
+      // Consultar directamente para Cali, Colombia (sin necesidad de coordenadas)
       const respuesta = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apiKey}`
+        `${api.base}weather?q=Cali,CO&units=metric&appid=${api.key}`
       );
       
       if (!respuesta.ok) {
@@ -95,26 +75,15 @@ function InventarioDispositivos(){
       
       const datos = await respuesta.json();
       
-      // Obtener la temperatura actual
-      const nuevaTemperatura = Math.round(datos.current.temp);
+      // Actualizar los estados con más información del clima
+      const nuevaTemperatura = Math.round(datos.main.temp);
       setTemperatura(nuevaTemperatura);
-      localStorage.setItem('temperatura', nuevaTemperatura.toString());
-      
-      
-      // Guardar la hora de la última actualización
-      localStorage.setItem('ultimaActualizacionClima', ahora.toString());
-      setUltimaActualizacion(ahora.toString());
+      // Actualizar la última vez que se obtuvo el clima
+      setUltimaActualizacion(new Date().toLocaleTimeString());
       
     } catch (error) {
       console.error("Error al obtener la temperatura:", error);
-      
-      // Si no hay temperatura guardada previamente, usar datos simulados
-      if (!localStorage.getItem('temperatura')) {
-        const tempSimulada = Math.floor(Math.random() * 5) + 17; // Temperatura entre 20-25°C para Cali
-        setTemperatura(tempSimulada);
-        localStorage.setItem('temperatura', tempSimulada.toString());
-        localStorage.setItem('ultimaActualizacionClima', ahora.toString());
-      }
+      setTemperatura(null);
     } finally {
       setCargandoClima(false);
     }
@@ -136,7 +105,8 @@ function InventarioDispositivos(){
     }
     listarDispositivos();
     listarEstados();
-  }, [])
+    obtenerTemperaturaActual();
+  }, []);
 
   const abrirModal = (dispositivo) => {
     setDispositivoSeleccionado(dispositivo);
@@ -303,10 +273,17 @@ function InventarioDispositivos(){
         />
         <div className="temperatura">
           {cargandoClima ? (
-            '⌛ Obteniendo temperatura de Bogotá...'
+            '⌛ Obteniendo temperatura de Cali...'
           ) : (
             <>
               🌤 Temperatura en Cali: {temperatura !== null ? `${temperatura}°C` : 'No disponible'}
+              <button 
+                onClick={obtenerTemperaturaActual} 
+                style={{marginLeft: '10px', background: 'none', border: 'none', cursor: 'pointer'}}
+                title="Actualizar temperatura"
+              >
+                🔄
+              </button>
             </>
           )}
         </div>
