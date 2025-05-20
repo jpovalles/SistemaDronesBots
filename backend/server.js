@@ -80,11 +80,11 @@ app.put('/reservas/:idReserva', async (req, res) => {
     const { estado } = req.body;
 
     try {
-        await pool.query(
-            'UPDATE reserva SET estado = $1 WHERE id = $2',
+        const result = await pool.query(
+            'UPDATE reserva SET estado = $1 WHERE id = $2 returning dispositivo',
             [estado, idReserva]
         );
-        res.status(200).json({ message: 'Estado de la reserva actualizado' });
+        res.status(200).json({ message: 'Estado de la reserva actualizado', dispositivo: result.rows[0].dispositivo });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al actualizar el estado de la reserva' });
@@ -144,8 +144,8 @@ app.post('/multas', async (req, res) => {
 app.delete("/reservas/:idReserva", async (req, res) => {
     try{
         const { idReserva } = req.params;
-        await pool.query("DELETE FROM reserva WHERE id = $1", [idReserva]);
-        res.json({succes: true, message: "Reserva eliminada"})
+        const result = await pool.query("DELETE FROM reserva WHERE id = $1 returning dispositivo", [idReserva]);
+        res.json({succes: true, message: "Reserva eliminada", dispositivo: result.rows[0].dispositivo})
     } catch(e){
         res.status(500).json({ success: false, message: "Error"});
     }

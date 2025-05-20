@@ -1,6 +1,6 @@
 import React from "react";
 
-import { eliminarReserva, agregarMulta } from "../../../api";
+import { eliminarReserva, actualizarEstadoReserva, agregarMulta, agregarEstadoReserva, agregarEstadoDispositivo } from "../../../api";
 
 import './CancelarPedido.css';
 
@@ -11,7 +11,26 @@ function CancelarPedido({idPedido, idusuario, usuario, multa, setShowCancel, onC
     const handleCancel = async () => {
         try {
             multa && await handleMulta();
-            const response = await eliminarReserva(idPedido);
+            const response = await actualizarEstadoReserva(idPedido, 4);
+
+            const currentTime = new Date();
+            const fecha = currentTime.toISOString().split('T')[0];
+            const hora = currentTime.toTimeString().split(' ')[0].slice(0, 5);
+
+            await agregarEstadoReserva({
+                        idReserva: idPedido,
+                        hora: hora,
+                        fecha: fecha,
+                        estado: `El servicio fue cancelado`
+            });
+            
+            await agregarEstadoDispositivo({
+                idDispositivo: response.dispositivo,
+                hora: hora,
+                fecha: fecha,
+                estado: `El servicio ${idPedido} fue cancelado`
+            });
+
             if (response) {
                 alert("Reserva cancelada exitosamente");
                 onCancelSuccess();
