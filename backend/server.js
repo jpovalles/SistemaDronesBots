@@ -29,13 +29,13 @@ app.listen(PORT, () => {
 
 // CRUD reservas
 app.post('/reservas', async (req, res) => {
-    const { fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo} = req.body;
+    const { fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario} = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo, estado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-            [ remitente, destinatario, fechaInicio, horaInicio, destino, origen, observaciones, dispositivo, 1]
+            'INSERT INTO reserva (remitente, destinatario, fecha, hora, destino, origen, observaciones, dispositivo, estado, operario) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+            [ remitente, destinatario, fechaInicio, horaInicio, destino, origen, observaciones, dispositivo, 1, operario]
         );
-        res.status(201).json({ message: 'Reserva creada' });
+        res.status(201).json({ message: 'Reserva creada', id: result.rows[0].id });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al crear la reserva' });
@@ -71,6 +71,57 @@ app.get('/reservas/estado/:estado', async (req, res) => {
     } catch (error) {
         console.error('Error al obtener reservas:', error);
         res.status(500).json({ error: 'Error al obtener reservas' });
+    }
+});
+
+// actualizar estado de reserva
+app.put('/reservas/:idReserva', async (req, res) => {
+    const { idReserva } = req.params;
+    const { estado } = req.body;
+
+    try {
+        await pool.query(
+            'UPDATE reserva SET estado = $1 WHERE id = $2',
+            [estado, idReserva]
+        );
+        res.status(200).json({ message: 'Estado de la reserva actualizado' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar el estado de la reserva' });
+    }
+});
+
+// añadir estado a bitacora de reservas
+app.post('/reservas/:idReserva/estado', async (req, res) => {
+    const { idReserva } = req.params;
+    const { estado, hora, fecha } = req.body;
+
+    try {
+        await pool.query(
+            'INSERT INTO historial_servicio (id_reserva, fecha, hora, estado) VALUES ($1, $2, $3, $4)',
+            [idReserva,  fecha, hora, estado]
+        );
+        res.status(201).json({ message: 'Estado añadido a la bitácora' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al añadir el estado a la bitácora' });
+    }
+});
+
+// añadir estado a bitacora de dispositivos
+app.post('/dispositivos/:idDispositivo/estado', async (req, res) => {
+    const { idDispositivo } = req.params;
+    const { estado, hora, fecha } = req.body;
+
+    try {
+        await pool.query(
+            'INSERT INTO historial_dispositivo (id_dispositivo, fecha, hora, estado) VALUES ($1, $2, $3, $4)',
+            [idDispositivo,  fecha, hora, estado]
+        );
+        res.status(201).json({ message: 'Estado añadido a la bitácora' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al añadir el estado a la bitácora' });
     }
 });
 
