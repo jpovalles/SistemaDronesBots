@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './InventarioRobots.css';
-import { obtenerDispositivos } from '../../api';
+import { obtenerDispositivos, obtenerEstados, actualizarDispositivo } from '../../api';
 
 function InventarioDispositivos(){ 
   const [dispositivos, setDispositivos] = useState([]);
-  
+  const [estados, setEstados] = useState([]);
+  const clases = ["btn-historial", "btn-mantenimiento", "btn-retirar"];
   const [tipo, setTipo] = useState('Todos');
   const [estado, setEstado] = useState('Todos');
   const [bateria, setBateria] = useState('Cualquiera');
@@ -22,7 +23,12 @@ function InventarioDispositivos(){
       const dato = await obtenerDispositivos();
       setDispositivos(dato)
     }
+    async function listarEstados(){
+      const datoEstado = await obtenerEstados();
+      setEstados(datoEstado);
+    }
     listarDispositivos();
+    listarEstados();
   }, [])
 
   const abrirModal = (dispositivo) => {
@@ -35,14 +41,15 @@ function InventarioDispositivos(){
     setDispositivoSeleccionado(null);
   };
 
-  const actualizarEstadoDispositivo = (id, nuevoEstado) => {
+  const actualizarEstadoDispositivo = async (id, nuevoEstado) => {
+    actualizarDispositivo(id, dispositivoSeleccionado.capacidad, dispositivoSeleccionado.id_tipo, nuevoEstado.id, dispositivoSeleccionado.fecha, dispositivoSeleccionado.nivel_bateria);
     const dispositivosActualizados = dispositivos.map(d => 
-      d.id === id ? { ...d, estado: nuevoEstado } : d
+      d.id === id ? { ...d, estado: nuevoEstado.estado } : d
     );
     setDispositivos(dispositivosActualizados);
     
     if (dispositivoSeleccionado && dispositivoSeleccionado.id === id) {
-      setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado });
+      setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado.estado });
     }
     
     cerrarModal();
@@ -84,10 +91,10 @@ function InventarioDispositivos(){
         <select value={bateria} onChange={(e) => setBateria(e.target.value)}>
             <option value="Bateria">Nivel de Batería</option>
             <option value="0-20">0% - 20%</option>
-            <option value="21-40">20% - 40%</option>
-            <option value="41-60">40% - 60%</option>
-            <option value="61-80">60% - 80%</option>
-            <option value="81-100">80% - 100%</option>
+            <option value="21-40">21% - 40%</option>
+            <option value="41-60">41% - 60%</option>
+            <option value="61-80">61% - 80%</option>
+            <option value="81-100">81% - 100%</option>
         </select>
 
         <button className='btn-aplicar' onClick={() => {}}>Aplicar</button>
@@ -111,7 +118,7 @@ function InventarioDispositivos(){
         <div className="busqueda-temp">
         <input
             type="text"
-            placeholder="🔍 Buscar por ID o número de serie"
+            placeholder="🔍 Buscar por ID"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
         />
@@ -172,24 +179,15 @@ function InventarioDispositivos(){
                 <p><strong>Distancia recorrida:</strong> {dispositivoSeleccionado.distRecorrida}</p>
                 </div>
                 <div className="modal-botones">
-                    <button
-                        className="btn-historial"
-                        onClick={() => actualizarEstadoDispositivo(dispositivoSeleccionado.id, 'Operativo')}
-                    >
-                        Operativo
+                    {estados.map((state, i) => (
+                      <button
+                        key={state.id}
+                        className={clases[i]}
+                        onClick={() => actualizarEstadoDispositivo(dispositivoSeleccionado.id, state)}
+                      >
+                        {state.estado}
                     </button>
-                    <button
-                        className="btn-mantenimiento"
-                        onClick={() => actualizarEstadoDispositivo(dispositivoSeleccionado.id, 'Mantenimiento')}
-                    >
-                        Mantenimiento
-                    </button>
-                    <button
-                        className="btn-retirar"
-                        onClick={() => actualizarEstadoDispositivo(dispositivoSeleccionado.id, 'Fuera de servicio')}
-                    >
-                        Fuera de servicio
-                    </button>
+                    ))}
                 </div>
 
             </div>

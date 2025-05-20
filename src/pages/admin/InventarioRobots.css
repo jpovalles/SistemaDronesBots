@@ -228,12 +228,12 @@
 }
 
 .btn-historial {
-  background-color: #28a745;
-  color: white;
+  background-color: #a6f6b2;
+  color: #038825;
 }
 
 .btn-historial:hover {
-  background-color: #1e7e34;
+  background-color: #5ef975;
 }
 
 .btn-mantenimiento {

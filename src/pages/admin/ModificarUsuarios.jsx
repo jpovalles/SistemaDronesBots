@@ -54,6 +54,7 @@ function ModificarUsuarios(){
     };
 
     const handleSave = async () => {
+        console.log(users[0]);
         const respuesta = await actualizarUsuario(
             editingUser,
             editedData.nombre_usuario,
