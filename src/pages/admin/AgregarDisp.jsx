@@ -31,7 +31,7 @@ function AgregarDispo(){
 
     const envio = async(e) => {
         e.preventDefault(); 
-        const aleatorio = Math.floor(Math.random() * 101);
+        const aleatorio = Math.floor(Math.random() * (100 - 30 + 1)) + 30;
         const fecha = new Date(formData.fecha).toISOString().split("T")[0];
         const nuevoDispo = {
             tipo: formData.tipo, 
