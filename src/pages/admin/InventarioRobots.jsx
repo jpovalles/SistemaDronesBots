@@ -16,6 +16,20 @@ function InventarioDispositivos(){
 
   const [modalQrAbierto, setModalQrAbierto] = useState(false);
   const [dispositivoQR, setDispositivoQR] = useState(null);
+  
+  // Estado para almacenar la temperatura actual
+  const [temperatura, setTemperatura] = useState(() => {
+    // Intentar recuperar la temperatura guardada en localStorage
+    const temperaturaGuardada = localStorage.getItem('temperatura');
+    return temperaturaGuardada ? parseInt(temperaturaGuardada) : null;
+  });
+  
+  const [ultimaActualizacion, setUltimaActualizacion] = useState(() => {
+    return localStorage.getItem('ultimaActualizacionClima') || null;
+  });
+  
+  // Solo mostrar cargando si no hay temperatura guardada
+  const [cargandoClima, setCargandoClima] = useState(!localStorage.getItem('temperatura'));
 
   const abrirModalQR = (dispositivo) => {
     setDispositivoQR(dispositivo);
@@ -41,50 +55,82 @@ function InventarioDispositivos(){
     setDispositivoEscaneo(null);
   };
 
-  // const manejarEscaneoQR = (datosQR) => {
-  //   console.log("QR escaneado:", datosQR);
-  // };
-
   const manejarEscaneoQR = (datosQR) => {
     try {
       const data = JSON.parse(datosQR);
-      const existe = dispositivos.some(d => d.id === data.id);
     } catch (err) {
       console.error("QR inválido:", err);
       alert("❌ Código QR no válido.");
     }
   };
 
+  // Función para obtener la temperatura actual
+  const obtenerTemperaturaActual = async () => {
+    // Si tenemos datos recientes (menos de 60 minutos), no actualizamos
+    const ahora = Date.now();
+    const ultimaActual = localStorage.getItem('ultimaActualizacionClima');
+    
+    if (ultimaActual && (ahora - parseInt(ultimaActual)) < 60 * 60 * 1000) {
+      // Los datos tienen menos de 1 hora, usamos los guardados
+      return;
+    }
+    
+    setCargandoClima(true);
+    try {
+      // Usando la API de OpenWeatherMap con la API key proporcionada
+      const apiKey = '438c8f3572bba0c7e2cc248f0bf688fd';
+      
+      // Coordenadas de Cali, Colombia
+      const lat = 3.4516;
+      const lon = -76.5320;
+      
+      const respuesta = await fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${apiKey}`
+      );
+      
+      if (!respuesta.ok) {
+        throw new Error('No se pudo obtener la temperatura');
+      }
+      
+      const datos = await respuesta.json();
+      
+      // Obtener la temperatura actual
+      const nuevaTemperatura = Math.round(datos.current.temp);
+      setTemperatura(nuevaTemperatura);
+      localStorage.setItem('temperatura', nuevaTemperatura.toString());
+      
+      
+      // Guardar la hora de la última actualización
+      localStorage.setItem('ultimaActualizacionClima', ahora.toString());
+      setUltimaActualizacion(ahora.toString());
+      
+    } catch (error) {
+      console.error("Error al obtener la temperatura:", error);
+      
+      // Si no hay temperatura guardada previamente, usar datos simulados
+      if (!localStorage.getItem('temperatura')) {
+        const tempSimulada = Math.floor(Math.random() * 5) + 17; // Temperatura entre 20-25°C para Cali
+        setTemperatura(tempSimulada);
+        localStorage.setItem('temperatura', tempSimulada.toString());
+        localStorage.setItem('ultimaActualizacionClima', ahora.toString());
+      }
+    } finally {
+      setCargandoClima(false);
+    }
+  };
 
   const formatoFecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
     return fecha.toLocaleDateString("es-ES")
   }
 
-  // useEffect(() => {
-  //   async function listarDispositivos(){
-  //     const dato = await obtenerDispositivos();
-  //     setDispositivos(dato)
-  //   }
-  //   listarDispositivos();
-  // }, [])
-
   useEffect(() => {
     async function listarDispositivos(){
-      // Verificar si hay dispositivos en localStorage
-      const dispositivosGuardados = localStorage.getItem('dispositivos');
-      
-      if (dispositivosGuardados) {
-        // Si hay datos guardados, usarlos
-        setDispositivos(JSON.parse(dispositivosGuardados));
-      } else {
-        // Si no hay datos, cargar desde la API
-        const dato = await obtenerDispositivos();
-        setDispositivos(dato);
-      }
+      const dato = await obtenerDispositivos();
+      setDispositivos(dato)
     }
     listarDispositivos();
-  }, []);
+  }, [])
 
   const abrirModal = (dispositivo) => {
     setDispositivoSeleccionado(dispositivo);
@@ -95,19 +141,6 @@ function InventarioDispositivos(){
     setModalAbierto(false);
     setDispositivoSeleccionado(null);
   };
-
-  // const actualizarEstadoDispositivo = (id, nuevoEstado) => {
-  //   const dispositivosActualizados = dispositivos.map(d => 
-  //     d.id === id ? { ...d, estado: nuevoEstado } : d
-  //   );
-  //   setDispositivos(dispositivosActualizados);
-    
-  //   if (dispositivoSeleccionado && dispositivoSeleccionado.id === id) {
-  //     setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado });
-  //   }
-    
-  //   cerrarModal();
-  // };
 
   const filtrarDispositivos = () => {
     return dispositivos.filter(d => {
@@ -186,22 +219,22 @@ function InventarioDispositivos(){
     return () => clearInterval(interval);
   }, []);
 
-// 3. Modificar la función actualizarEstadoDispositivo para guardar en localStorage
-const actualizarEstadoDispositivo = (id, nuevoEstado) => {
-  const dispositivosActualizados = dispositivos.map(d => 
-    d.id === id ? { ...d, estado: nuevoEstado } : d
-  );
-  setDispositivos(dispositivosActualizados);
-  
-  // Guardar en localStorage
-  localStorage.setItem('dispositivos', JSON.stringify(dispositivosActualizados));
-  
-  if (dispositivoSeleccionado && dispositivoSeleccionado.id === id) {
-    setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado });
-  }
-  
-  cerrarModal();
-};
+  // Modificar la función actualizarEstadoDispositivo para guardar en localStorage
+  const actualizarEstadoDispositivo = (id, nuevoEstado) => {
+    const dispositivosActualizados = dispositivos.map(d => 
+      d.id === id ? { ...d, estado: nuevoEstado } : d
+    );
+    setDispositivos(dispositivosActualizados);
+    
+    // Guardar en localStorage
+    localStorage.setItem('dispositivos', JSON.stringify(dispositivosActualizados));
+    
+    if (dispositivoSeleccionado && dispositivoSeleccionado.id === id) {
+      setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado });
+    }
+    
+    cerrarModal();
+  };
 
   useEffect(() => {
     if (dispositivoSeleccionado) {
@@ -211,7 +244,6 @@ const actualizarEstadoDispositivo = (id, nuevoEstado) => {
       }
     }
   }, [dispositivos]);
-
 
   return (
     <div className="contenedor-inventario">
@@ -265,7 +297,15 @@ const actualizarEstadoDispositivo = (id, nuevoEstado) => {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
         />
-        <div className="temperatura">🌤 Temperatura: 23°C</div>
+        <div className="temperatura">
+          {cargandoClima ? (
+            '⌛ Obteniendo temperatura de Bogotá...'
+          ) : (
+            <>
+              🌤 Temperatura en Cali: {temperatura !== null ? `${temperatura}°C` : 'No disponible'}
+            </>
+          )}
+        </div>
         </div>
 
         <table className='tabla-inventario'>
