@@ -305,7 +305,7 @@ app.put('/dispositivos/:idn', async(req, res) => {
 app.delete("/dispositivos/:id", async (req, res) => {
     try{
         const {id} = req.params;
-        await pool.query("DELETE FROM users WHERE nombre_usuario = $1", [id]);
+        await pool.query("DELETE FROM devices WHERE id = $1", [id]);
         res.json({success: true, message: "Dispositivo eliminado"})
     }catch(e){
         res.status(500).json({ success: false, message: 'Error'})

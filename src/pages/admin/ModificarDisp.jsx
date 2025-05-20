@@ -39,8 +39,8 @@ function ModificarDisp(){
         }
         if(confirmed){
             await eliminarDispositivos(id);
-            const disp = obtenerDispositivos();
-            setDisp(disp);
+            const dispositivoNuevo = await obtenerDispositivos();
+            setDisp(dispositivoNuevo);
         }
     };
 
