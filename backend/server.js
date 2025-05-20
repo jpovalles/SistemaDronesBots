@@ -59,10 +59,12 @@ app.get('/reservas/estado/:estado', async (req, res) => {
             r.destino,
             r.observaciones,
             r.dispositivo,
-            r.estado
+            r.estado,
+            o.nombre AS operario
         FROM reserva r
         JOIN clients u1 ON r.remitente = u1.id
         JOIN clients u2 ON r.destinatario = u2.id
+        JOIN users o ON r.operario = o.nombre_usuario
         WHERE r.estado = $1`,
         [estado]
     );
@@ -105,6 +107,27 @@ app.post('/reservas/:idReserva/estado', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al añadir el estado a la bitácora' });
+    }
+});
+
+// obtener ultimo log de reservas por id de reserva
+app.get('/reservas/:idReserva/estado', async (req, res) => {
+    const { idReserva } = req.params;
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha DESC, hora DESC LIMIT 1',
+            [idReserva]
+        );
+
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows[0]);
+        } else {
+            res.status(204).send(); // No se encontró el estado
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el último log de la reserva' });
     }
 });
 

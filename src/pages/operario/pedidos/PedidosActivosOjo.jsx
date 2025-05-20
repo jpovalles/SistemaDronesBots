@@ -55,50 +55,49 @@ function DetallePedido({ pedido, onClose }) {
         <button className="btn-back" onClick={onClose}>
           &#8592;
         </button>
-        <span className="detalle-id">Id del pedido: {pedido.idPedido}</span>
+        <span className="detalle-id">Id del pedido: {pedido.id}</span>
       </div>
 
       <div className="detalle-pedido-content">
         <div className="detalle-info-section">
           <div className="detalle-info-row">
             <span className="info-label">Tipo de servicio</span>
-            <span className="info-value">{pedido.tipo_servicio}</span>
+            <span className="info-value">Envio</span>
           </div>
           
           <div className="detalle-info-row">
             <span className="info-label">Remitente</span>
-            <span className="info-value">{pedido.remitente.nombre}</span>
+            <span className="info-value">{pedido.remitente_nombre}</span>
           </div>
 
           <div className="detalle-info-row">
-            <span className="info-label">Origen</span>
-            <span className="info-value">Biblioteca</span>
-          </div>
-          
-          <div className="detalle-info-row">
             <span className="info-label">Hora de inicio</span>
-            <span className="info-value">{formatearHora(pedido.hora_inicio)}</span>
+            <span className="info-value">{formatearHora(pedido.hora)}</span>
           </div>
 
           <div className="detalle-info-row">
             <span className="info-label">Destinatario</span>
-            <span className="info-value">{pedido.remitente.nombre}</span>
+            <span className="info-value">{pedido.destinatario_nombre}</span>
           </div>
+
+          <div className="detalle-info-row">
+            <span className="info-label">Técnico asociado</span>
+            <span className="info-value">{pedido.operario}</span>
+          </div>
+
+          <div className="detalle-info-row">
+            <span className="info-label">Origen</span>
+            <span className="info-value">{pedido.origen}</span>
+          </div>
+
+          <div></div>
 
           <div className="detalle-info-row">
             <span className="info-label">Destino</span>
             <span className="info-value">{pedido.destino}</span>
           </div>
 
-          <div className="detalle-info-row">
-            <span className="info-label">Técnico asociado</span>
-            <span className="info-value">{pedido.tecnico_asociado}</span>
-          </div>
-
-          <div className="detalle-info-row">
-            <span className="info-label">Roberto Gomez</span>
-            <span className="info-value">{pedido.remitente.id}</span>
-          </div>
+          
         </div>
 
         <div className="detalle-progreso-section">

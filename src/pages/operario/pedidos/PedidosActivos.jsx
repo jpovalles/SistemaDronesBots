@@ -1,99 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PedidosActivos.css";
 import PedidosActivosOjo from "./PedidosActivosOjo";
+
+import {obtenerReservasPorEstado, obtenerUltimoLogReserva} from "../../../api";
 
 function PedidosActivos() {
     // Estado para controlar la visualización del detalle de pedido
     const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
     
     // Datos de ejemplo para pedidos activos
-    const dataActivos = [
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "En camino"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Entregado"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Esperando QR"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Retornando"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Iniciando pedido"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "En camino"
-        },
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Entregado"
-        },
-    ];
+    const [dataActivos, setDataActivos] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0); // Para refrescar la tabla
 
+    const estado = 2;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const reservas = await obtenerReservasPorEstado(estado);
+                const reservasConEstado = await Promise.all(
+                    reservas.map(async (reserva) => {
+                        const ultimoLog = await fetchUltimoLog(reserva.id);
+                        return {
+                            ...reserva,
+                            ultimoEstado: ultimoLog
+                        };
+                    })
+                );
+                setDataActivos(reservasConEstado);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+    
+        fetchData();
+    }, [refreshTrigger]);
+    
+        const fetchUltimoLog = async (idReserva) => {
+            try {
+                const log = await obtenerUltimoLogReserva(idReserva);
+                if (log) {
+                    const { estado } = log;
+                    return estado;
+                } else {
+                    return "Sin estado";
+                }
+            } catch (error) {
+                console.error("Error al obtener el último log:", error);
+                return "Error";
+            }
+        }
+    
     const getEstadoColor = (estado) => {
         switch(estado) {
             case "En camino":
@@ -137,9 +93,11 @@ function PedidosActivos() {
             <tr>
                 <th>Id del pedido</th>
                 <th>Tipo de servicio</th>
-                <th>Técnico asociado</th>
+                <th>Operario asociado</th>
                 <th>Remitente</th>
+                <th>Fecha de inicio</th>
                 <th>Hora de inicio</th>
+                <th>Origen</th>
                 <th>Destino</th>
                 <th>Estado</th>
                 <th></th>
@@ -147,28 +105,22 @@ function PedidosActivos() {
         </thead>
         <tbody>
             {dataActivos.map((pedido, index) => (
-                <tr key={index}>
-                    <td>{pedido.idPedido}</td>
-                    <td>{pedido.tipo_servicio}</td>
-                    <td>{pedido.tecnico_asociado}</td>
-                    <td>{pedido.remitente.nombre}</td>
-                    <td>{pedido.hora_inicio}</td>
+                
+                <tr key={pedido.id}>
+                    <td>{pedido.id}</td>
+                    <td>Envio</td>
+                    <td>{pedido.operario}</td>
+                    <td>{pedido.remitente_nombre}</td>
+                    <td>{pedido.fecha.split('T')[0]}</td>
+                    <td>{pedido.hora}</td>
+                    <td>{pedido.origen}</td>
                     <td>{pedido.destino}</td>
                     <td>
                         <div 
-                            style={{
-                                backgroundColor: getEstadoColor(pedido.estado),
-                                color: "black",
-                                padding: '4px 8px',
-                                borderRadius: '12px',
-                                display: 'inline-block',
-                                fontSize: '0.85em',
-                                fontWeight: 'bold',
-                                textAlign: 'center'
-                            }}
+                            
                             className="botones-estado-act"
                         >
-                            {pedido.estado}
+                            {pedido.ultimoEstado}
                         </div>
                     </td>
                     <td className="icono-ojo">
