@@ -1,11 +1,11 @@
 const API_URL = 'http://localhost:5000';
 
 // Añadir reserva
-export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo }){
+export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario }){
     const response = await fetch(`${API_URL}/reservas`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo}), 
+        body: JSON.stringify({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario}), 
     });
     return response.json(); 
 }
@@ -20,6 +20,16 @@ export async function obtenerReservasPorEstado(estado) {
     return response.json();
 }
 
+// actualizar estado de reserva
+export async function actualizarEstadoReserva(idReserva, estado) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ estado }),
+    });
+    return response.json();
+}
+
 // eliminar reserva
 export async function eliminarReserva(idReserva) {
     const response = await fetch(`${API_URL}/reservas/${idReserva}`, {
@@ -27,6 +37,26 @@ export async function eliminarReserva(idReserva) {
     });
     const data = await response.json();
     return data;
+}
+
+// añadir estado a bitacora de reservas
+export async function agregarEstadoReserva({idReserva, hora, fecha, estado}) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}/estado`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ estado, hora, fecha }),
+    });
+    return response.json();
+}
+
+// añadir estado a bitacora de dispositivos
+export async function agregarEstadoDispositivo({idDispositivo, hora, fecha, estado}) {
+    const response = await fetch(`${API_URL}/dispositivos/${idDispositivo}/estado`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ estado, hora, fecha }),
+    });
+    return response.json();
 }
 
 // agregar multa

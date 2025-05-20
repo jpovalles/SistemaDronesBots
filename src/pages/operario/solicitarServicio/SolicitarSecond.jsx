@@ -71,7 +71,7 @@ function SolicitarSecond({nextStep, previousStop, showAlert, alertaEstado, solic
                 </select>
             </div>
             <div>
-                <label for="mensaje">Mensaje:</label>
+                <label for="mensaje">Observaciones:</label>
                 <textarea id="mensaje" name="mensaje" rows="4" cols="40" placeholder="Escribe tu mensaje" onChange={handleSelect(setObservaciones)} value={observaciones}></textarea>
             </div>
 

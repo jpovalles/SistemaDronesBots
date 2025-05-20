@@ -3,11 +3,12 @@ import { obtenerCliente } from "../../../api";
 
 import "./FinalSolicitud.css";
 
-import {agregarReserva} from "../../../api";
+import {agregarReserva, agregarEstadoReserva, agregarEstadoDispositivo} from "../../../api";
 
 function FinalSolicitud({previousStop, solicitud, restartWizard}) {
 
     const operario = localStorage.getItem("usuario_actual")
+    const userOperario = localStorage.getItem("username")
     const {fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo } = solicitud;
 
     const [remitenteData, setRemitenteData] = useState(null);
@@ -40,10 +41,32 @@ function FinalSolicitud({previousStop, solicitud, restartWizard}) {
                 origen: origen,
                 destino: destino,
                 observaciones: observaciones,
-                dispositivo: dispositivo.id
+                dispositivo: dispositivo.id,
+                operario: userOperario
             });
 
+            console.log(response.id)
+
             if (response) {
+                const currentTime = new Date();
+                const fecha = currentTime.toISOString().split('T')[0];
+                const hora = currentTime.toTimeString().split(' ')[0].slice(0, 5);
+                console.log(hora);
+                console.log(fecha);
+                await agregarEstadoReserva({
+                    idReserva: response.id,
+                    hora: hora,
+                    fecha: fecha,
+                    estado: `Pedido asignado al dispositivo ${dispositivo.id} - ${dispositivo.nombre}`
+                });
+    
+                await agregarEstadoDispositivo({
+                    idDispositivo: dispositivo.id,
+                    hora: hora,
+                    fecha: fecha,
+                    estado: `Dispositivo asignado al servicio ${response.id}`
+                });
+                
                 alert("Reserva creada exitosamente");
                 restartWizard();
             } else {
