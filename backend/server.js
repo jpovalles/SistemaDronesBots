@@ -344,3 +344,10 @@ app.get("/tipos", async(req, res) => {
         res.status(500).json({error: e.message})
     }
 })
+
+/*
+app.get('/confirmar-entrega/', async (req, res) => {
+    console.log("Yujuuuuuuu")
+    res.send('Entrega confirmada');
+});
+*/
