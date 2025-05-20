@@ -180,3 +180,16 @@ export async function obtenerTipos(){
     const response = await fetch(`${API_URL}/tipos`);
     return response.json();
 }
+
+//Actualizar bateria de dispositivos
+export async function actualizarDispositivoBateria(idn, capacidad, tipo, estado, fecha, nivel_bateria){
+    console.log(`${API_URL}/dispositivos/${idn}`)
+    const response = await fetch(`${API_URL}/dispositivos/${idn}`, {
+        method: "PUT", 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ capacidad, tipo, estado, fecha, nivel_bateria}),
+    });
+
+    const data = await response.json();
+    return data;
+}

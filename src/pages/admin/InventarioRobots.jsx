@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './InventarioRobots.css';
-import { obtenerDispositivos, obtenerEstados, actualizarDispositivo } from '../../api';
+// import { obtenerDispositivos, obtenerEstados, actualizarDispositivo } from '../../api';
+import { obtenerDispositivos, obtenerEstados, actualizarDispositivo, actualizarDispositivoBateria } from '../../api';
 import CamaraQR from "../../assets/CamaraQR";
 import GeneradorQR from "../../assets/GeneradorQR"
 
@@ -14,14 +15,13 @@ function InventarioDispositivos(){
   const [busqueda, setBusqueda] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
-
   const [modalQrAbierto, setModalQrAbierto] = useState(false);
   const [dispositivoQR, setDispositivoQR] = useState(null);
-  
-  // Estado para almacenar la temperatura actual
   const [temperatura, setTemperatura] = useState(null);
   const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
   const [cargandoClima, setCargandoClima] = useState(true);
+  const [modalCamaraAbierto, setModalCamaraAbierto] = useState(false);
+  const [dispositivoEscaneo, setDispositivoEscaneo] = useState(null);
 
   const abrirModalQR = (dispositivo) => {
     setDispositivoQR(dispositivo);
@@ -33,10 +33,6 @@ function InventarioDispositivos(){
     setDispositivoQR(null);
   };
 
-  const [modalCamaraAbierto, setModalCamaraAbierto] = useState(false);
-  const [dispositivoEscaneo, setDispositivoEscaneo] = useState(null);
-
-  // Añadir estas funciones para manejar la cámara:
   const abrirModalCamara = (dispositivo) => {
     setDispositivoEscaneo(dispositivo);
     setModalCamaraAbierto(true);
@@ -55,16 +51,30 @@ function InventarioDispositivos(){
     }
   };
 
+  const abrirModal = (dispositivo) => {
+    setDispositivoSeleccionado(dispositivo);
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setDispositivoSeleccionado(null);
+  };
+
+  const formatoFecha = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleDateString("es-ES")
+  }
+
   const obtenerTemperaturaActual = async () => {
     setCargandoClima(true);
     try {
-      // Usar la misma estructura que en el ejemplo
       const api = {
-        key: "438c8f3572bba0c7e2cc248f0bf688fd", // Mantener tu API key actual
+        key: "438c8f3572bba0c7e2cc248f0bf688fd",
         base: "https://api.openweathermap.org/data/2.5/"
       };
       
-      // Consultar directamente para Cali, Colombia (sin necesidad de coordenadas)
+      // Consultar directamente para Cali, Colombia
       const respuesta = await fetch(
         `${api.base}weather?q=Cali,CO&units=metric&appid=${api.key}`
       );
@@ -89,15 +99,45 @@ function InventarioDispositivos(){
     }
   };
 
-  const formatoFecha = (fechaISO) => {
-    const fecha = new Date(fechaISO);
-    return fecha.toLocaleDateString("es-ES")
-  }
+    // Funciones para guardar y obtener contadores de tiempo
+  const guardarContadoresTiempo = (id, ultimoTick, ultimoTickCarga) => {
+    const contadoresGuardados = JSON.parse(localStorage.getItem('contadoresTiempo') || '{}');
+    contadoresGuardados[id] = {
+      ultimoTick,
+      ultimoTickCarga
+    };
+    localStorage.setItem('contadoresTiempo', JSON.stringify(contadoresGuardados));
+  };
+
+  const obtenerContadoresTiempo = (id) => {
+    const contadoresGuardados = JSON.parse(localStorage.getItem('contadoresTiempo') || '{}');
+    if (contadoresGuardados[id]) {
+      return {
+        ultimoTick: contadoresGuardados[id].ultimoTick,
+        ultimoTickCarga: contadoresGuardados[id].ultimoTickCarga
+      };
+    }
+    return { ultimoTick: null, ultimoTickCarga: null };
+  };
 
   useEffect(() => {
+    // async function listarDispositivos(){
+    //   const dato = await obtenerDispositivos();
+    //   setDispositivos(dato)
+    // }
     async function listarDispositivos(){
       const dato = await obtenerDispositivos();
-      setDispositivos(dato)
+      
+      const dispositivosConContadores = dato.map(d => {
+        const contadores = obtenerContadoresTiempo(d.id);
+        return {
+          ...d,
+          _ultimoTick: contadores.ultimoTick,
+          _ultimoTickCarga: contadores.ultimoTickCarga
+        };
+      });
+      
+      setDispositivos(dispositivosConContadores);
     }
     async function listarEstados(){
       const datoEstado = await obtenerEstados();
@@ -108,18 +148,17 @@ function InventarioDispositivos(){
     obtenerTemperaturaActual();
   }, []);
 
-  const abrirModal = (dispositivo) => {
-    setDispositivoSeleccionado(dispositivo);
-    setModalAbierto(true);
-  };
-
-  const cerrarModal = () => {
-    setModalAbierto(false);
-    setDispositivoSeleccionado(null);
-  };
-
   const actualizarEstadoDispositivo = async (id, nuevoEstado) => {
-    actualizarDispositivo(id, dispositivoSeleccionado.capacidad, dispositivoSeleccionado.id_tipo, nuevoEstado.id, dispositivoSeleccionado.fecha, dispositivoSeleccionado.nivel_bateria);
+    await actualizarDispositivo(
+      id, 
+      dispositivoSeleccionado.capacidad, 
+      dispositivoSeleccionado.id_tipo, 
+      nuevoEstado.id, 
+      dispositivoSeleccionado.fecha, 
+      dispositivoSeleccionado.nivel_bateria
+    );
+    
+    // Actualizar el estado local
     const dispositivosActualizados = dispositivos.map(d => 
       d.id === id ? { ...d, estado: nuevoEstado.estado } : d
     );
@@ -129,7 +168,6 @@ function InventarioDispositivos(){
     if (dispositivoSeleccionado && dispositivoSeleccionado.id === id) {
       setDispositivoSeleccionado({ ...dispositivoSeleccionado, estado: nuevoEstado.estado });
     }
-    
     cerrarModal();
   };
 
@@ -158,6 +196,7 @@ function InventarioDispositivos(){
           let nuevoEstado = d.estado;
           let _ultimoTick = d._ultimoTick;
           let _ultimoTickCarga = d._ultimoTickCarga;
+          let cambio = false;
 
           // Desgaste si está operativo
           if (d.estado === 'Operativo') {
@@ -165,14 +204,18 @@ function InventarioDispositivos(){
             const diffSegundos = (ahora - _ultimoTick) / 1000;
 
             if (d.tipo === 'Dron' && diffSegundos >= 36) {
+              const bateriaPrev = nuevaBateria;
               nuevaBateria = Math.max(0, nuevaBateria - 1);
+              if (bateriaPrev !== nuevaBateria) cambio = true;
               _ultimoTick = ahora;
             } else if (d.tipo === 'Robot' && diffSegundos >= 144) {
+              const bateriaPrev = nuevaBateria;
               nuevaBateria = Math.max(0, nuevaBateria - 1);
+              if (bateriaPrev !== nuevaBateria) cambio = true;
               _ultimoTick = ahora;
             }
 
-            if (nuevaBateria < 20) {
+            if (nuevaBateria < 20 && d.estado !== 'Fuera de servicio') {
               nuevoEstado = 'Fuera de servicio';
             }
           }
@@ -183,12 +226,29 @@ function InventarioDispositivos(){
             const diffCarga = (ahora - _ultimoTickCarga) / 1000;
 
             if (d.tipo === 'Dron' && diffCarga >= 27 && nuevaBateria < 100) {
+              const bateriaPrev = nuevaBateria;
               nuevaBateria += 1;
+              if (bateriaPrev !== nuevaBateria) cambio = true;
               _ultimoTickCarga = ahora;
             } else if (d.tipo === 'Robot' && diffCarga >= 72 && nuevaBateria < 100) {
+              const bateriaPrev = nuevaBateria;
               nuevaBateria += 1;
+              if (bateriaPrev !== nuevaBateria) cambio = true;
               _ultimoTickCarga = ahora;
             }
+          }
+
+          // Si hubo cambio en la batería, actualizar en la BD
+          if (cambio) {
+            actualizarDispositivoBateria(
+              d.id, 
+              d.capacidad, 
+              d.id_tipo, 
+              d.estado === 'Operativo' ? 1 : (d.estado === 'Mantenimiento' ? 2 : 3), 
+              d.fecha, 
+              nuevaBateria
+            );
+            guardarContadoresTiempo(d.id, _ultimoTick, _ultimoTickCarga);
           }
 
           return {
@@ -199,9 +259,6 @@ function InventarioDispositivos(){
             _ultimoTickCarga
           };
         });
-
-        // Guardar en localStorage después de cada actualización
-        localStorage.setItem('dispositivos', JSON.stringify(nuevosDispositivos));
         
         return nuevosDispositivos;
       });
@@ -209,6 +266,7 @@ function InventarioDispositivos(){
 
     return () => clearInterval(interval);
   }, []);
+
 
   useEffect(() => {
     if (dispositivoSeleccionado) {
