@@ -1,6 +1,6 @@
 const API_URL = 'http://localhost:5000';
 
-// CRUD reservas
+// Añadir reserva
 export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo }){
     const response = await fetch(`${API_URL}/reservas`, {
         method: "POST",
@@ -8,6 +8,35 @@ export async function agregarReserva({ fechaInicio, horaInicio, remitente, desti
         body: JSON.stringify({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo}), 
     });
     return response.json(); 
+}
+
+// obtener reservas
+export async function obtenerReservasPorEstado(estado) {
+    const response = await fetch(`${API_URL}/reservas/estado/${estado}`);
+    
+    if (!response.ok) {
+        throw new Error('Error al obtener las reservas');
+    }
+    return response.json();
+}
+
+// eliminar reserva
+export async function eliminarReserva(idReserva) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}`, {
+        method: "DELETE",
+    });
+    const data = await response.json();
+    return data;
+}
+
+// agregar multa
+export async function agregarMulta({ idRemitente, multa }) {
+    const response = await fetch(`${API_URL}/multas`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ idRemitente, multa }),
+    });
+    return response.json();
 }
 
 // verificar multa
