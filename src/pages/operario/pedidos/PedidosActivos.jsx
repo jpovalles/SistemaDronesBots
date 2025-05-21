@@ -53,12 +53,12 @@ function PedidosActivos() {
     // Maneja el clic en el icono de ojo para mostrar detalles
     const handleVerDetalles = (pedido) => {
         setPedidoSeleccionado(pedido);
-        setRefreshTrigger(prev => prev + 1);
     }
-
+    
     // Cierra la vista de detalles
     const handleCerrarDetalles = () => {
         setPedidoSeleccionado(null);
+        setRefreshTrigger(prev => prev + 1);
     }
 
     // Determinar la clase de estado basada en el texto

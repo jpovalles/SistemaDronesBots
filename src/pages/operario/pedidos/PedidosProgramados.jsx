@@ -94,12 +94,13 @@ function PedidosProgramados() {
         setShowCancel(false);
     };
 
-    return (      
+    return (
+    <div style={{ overflowX: 'auto' }}>
     <table className="pedidos-table">
         {showCancel && <CancelarPedido idPedido={cancelData.idPedido} idusuario={cancelData.idusuario} usuario={cancelData.usuario}  setShowCancel={setShowCancel} onCancelSuccess={handleCancelSuccess} multa={cancelData.multa}/>}
         <thead>
             <tr>
-                <th>Id del pedido</th>
+                <th>Id</th>
                 <th>Remitente</th>
                 <th>Destinatario</th>
                 <th>Fecha de inicio</th>
@@ -158,6 +159,7 @@ function PedidosProgramados() {
             ))}
         </tbody>
     </table>
+    </div>      
     );
 }
 

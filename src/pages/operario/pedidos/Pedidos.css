@@ -55,6 +55,9 @@
   border-bottom: 2px solid white;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
 }
 
 .pedidos-table th {
