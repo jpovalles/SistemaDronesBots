@@ -60,10 +60,12 @@ app.get('/reservas/estado/:estado', async (req, res) => {
             r.destino,
             r.observaciones,
             r.dispositivo,
-            r.estado
+            r.estado,
+            o.nombre AS operario
         FROM reserva r
         JOIN clients u1 ON r.remitente = u1.id
         JOIN clients u2 ON r.destinatario = u2.id
+        JOIN users o ON r.operario = o.nombre_usuario
         WHERE r.estado = $1`,
         [estado]
     );
@@ -106,6 +108,48 @@ app.post('/reservas/:idReserva/estado', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al añadir el estado a la bitácora' });
+    }
+});
+
+// obtener ultimo log de reservas por id de reserva
+app.get('/reservas/:idReserva/estado', async (req, res) => {
+    const { idReserva } = req.params;
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha DESC, hora DESC LIMIT 1',
+            [idReserva]
+        );
+
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows[0]);
+        } else {
+            res.status(204).send(); // No se encontró el estado
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el último log de la reserva' });
+    }
+});
+
+// obtener todos los logs de una reserva
+app.get('/reservas/:idReserva/logs', async (req, res) => {
+    const { idReserva } = req.params;
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha ASC, hora ASC',
+            [idReserva]
+        );
+
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows);
+        } else {
+            res.status(204).send();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los logs de la reserva' });
     }
 });
 
@@ -396,6 +440,24 @@ app.get("/tipos", async(req, res) => {
         res.status(500).json({error: e.message})
     }
 })
+
+//Verificar si hay dispositivos en activo
+app.get("/verificar/:disp", async (req, res) => {
+    try {
+        const { disp } = req.params;
+        const result = await pool.query(
+            `SELECT COUNT(*) FROM reserva WHERE estado = 2 AND dispositivo = $1`,
+            [disp]
+        );
+        
+        const count = parseInt(result.rows[0].count, 10);
+        res.json({ cantidad: count });
+        
+    } catch (error) {
+        console.error("Error al verificar:", error);
+        res.status(500).json({ error: "Error al verificar dispositivo" });
+    }
+});
 
 /*
 app.get('/confirmar-entrega/', async (req, res) => {

@@ -1,7 +1,7 @@
 import './ModificarUsuarios.css';
 import { useState, useEffect } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa'; 
-import { obtenerDispositivos, actualizarDispositivo, obtenerEstados, eliminarDispositivos } from '../../api';
+import { obtenerDispositivos, actualizarDispositivo, obtenerEstados, eliminarDispositivos, verificarDispositivo } from '../../api';
 
 function ModificarDisp(){
     const [disp, setDisp] = useState([]);
@@ -33,15 +33,22 @@ function ModificarDisp(){
     : disp;
 
     const handleDelete = async (id) => {
-        const confirmed = window.confirm(`¿Seguro que quieres eliminar al dispositivo con id "${id}"?`);
-        if (confirmed) {
-            setDisp(disp.filter(u => u.id !== id));
+        const cant = await verificarDispositivo(id);
+        if(cant.cantidad > 0){
+            alert("No puedes eliminar este dispositivo porque tiene reservas activas.");
+            return;
+        }else{
+            const confirmed = window.confirm(`¿Seguro que quieres eliminar al dispositivo con id "${id}"?`);
+            if (confirmed) {
+                setDisp(disp.filter(u => u.id !== id));
+            }
+            if(confirmed){
+                await eliminarDispositivos(id);
+                const dispositivoNuevo = await obtenerDispositivos();
+                setDisp(dispositivoNuevo);
+            }
         }
-        if(confirmed){
-            await eliminarDispositivos(id);
-            const dispositivoNuevo = await obtenerDispositivos();
-            setDisp(dispositivoNuevo);
-        }
+        
     };
 
     const handleEdit = (id) => {

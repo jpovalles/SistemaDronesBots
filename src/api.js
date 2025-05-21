@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = "http://192.168.1.23:5000";
 
 // Añadir reserva
 export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario }){
@@ -47,6 +47,30 @@ export async function agregarEstadoReserva({idReserva, hora, fecha, estado}) {
         body: JSON.stringify({ estado, hora, fecha }),
     });
     return response.json();
+}
+
+// obtener ultimo log de reservas por id de reserva
+export async function obtenerUltimoLogReserva(idReserva) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}/estado`);
+    if (response.status === 200) {
+        return response.json();
+    } else if (response.status === 204) {
+        return null;
+    } else {
+        throw new Error("Error obteniendo el último log de la reserva");
+    }
+}
+
+// obtener todos los logs de una reserva
+export async function obtenerLogsReserva(idReserva) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}/logs`);
+    if (response.status === 200) {
+        return response.json();
+    } else if (response.status === 204) {
+        return null;
+    } else {
+        throw new Error("Error obteniendo los logs de la reserva");
+    }
 }
 
 // añadir estado a bitacora de dispositivos
@@ -222,4 +246,10 @@ export async function actualizarDispositivoBateria(idn, capacidad, tipo, estado,
 
     const data = await response.json();
     return data;
+}
+
+//Verificar si hay dispositivos en activo
+export async function verificarDispositivo(id){
+    const response = await fetch(`${API_URL}/verificar/${id}`);
+    return response.json();
 }

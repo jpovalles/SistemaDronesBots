@@ -92,7 +92,7 @@ function PedidosProgramados() {
     const handleCancelSuccess = () => {
         setRefreshTrigger(prev => prev + 1); // Increment to trigger useEffect
         setShowCancel(false);
-      };
+    };
 
     return (      
     <table className="pedidos-table">

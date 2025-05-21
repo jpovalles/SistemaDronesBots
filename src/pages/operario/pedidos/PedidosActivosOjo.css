@@ -103,10 +103,25 @@
 }
 
 .progreso-item {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin: 5px 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  text-align: start;
+
+  gap: 1em;
+  margin: 1em;
+}
+
+.progreso-item > *{
+  margin: 0;
+}
+
+.play-query{
+  height: 3em;
+  align-self: flex-end;
+}
+
+.datetime{
+  grid-column-start: 2;
 }
 
 .progreso-circulo {
@@ -141,4 +156,8 @@
 .progreso-item .progreso-circulo.activo + .progreso-texto {
   color: #0047ab;
   font-weight: 600;
+}
+
+.progreso-item > *{
+  color: black;
 }
