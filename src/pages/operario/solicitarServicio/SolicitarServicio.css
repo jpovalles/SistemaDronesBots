@@ -73,6 +73,27 @@
     cursor: pointer;
 }
 
+.btn-second{
+    padding: 10px 24px;
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: bold;
+    float: right;
+    border: #004aad 1px solid;
+    transition: background-color 0.3s;
+    margin-top: 30vh;
+    margin-left: 5vh;
+}
+
+.btn-second:hover {
+    background-color: aliceblue;
+    border: #004aad 1px solid;
+    color: #004aad;
+    cursor: pointer;
+}
 
 .solicitarSecond textarea {
     width: 15em;
