@@ -3,9 +3,9 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(6, 1fr);
     
-
     height: 100%;
     min-width: 40vw;
+    position: relative; /* Añadimos posición relativa para el contenedor */
 }
 
 .final-solicitud > *{
@@ -32,7 +32,18 @@
     grid-row-end: 6;
 }
 
+/* Modificamos esta clase para posicionar los botones en la esquina superior derecha */
 .final-boton{
-    grid-column-start: 3;
-    grid-row-start: 6;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    gap: 10px;
+    z-index: 1;
+}
+
+/* Estilo opcional para los botones */
+.final-boton .btn {
+    padding: 8px 16px;
+    border-radius: 20px;
 }

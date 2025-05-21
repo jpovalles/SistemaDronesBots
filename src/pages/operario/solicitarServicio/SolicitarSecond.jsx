@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import "./SolicitarServicio.css";
 
 function SolicitarSecond({nextStep, previousStop, showAlert, alertaEstado, solicitud, setSolicitud}) {
     const edificios = [
@@ -73,10 +74,11 @@ function SolicitarSecond({nextStep, previousStop, showAlert, alertaEstado, solic
             <div>
                 <label for="mensaje">Observaciones:</label>
                 <textarea id="mensaje" name="mensaje" rows="4" cols="40" placeholder="Escribe tu mensaje" onChange={handleSelect(setObservaciones)} value={observaciones}></textarea>
+                
+            <button className="btn-second"  onClick={() => handleSubmit()}>Siguiente</button>
+            <button className="btn-second"  onClick={() => handleBack()}>Atrás</button>
             </div>
 
-            <button className="btn"  onClick={() => handleSubmit()}>Siguiente</button>
-            <button className="btn"  onClick={() => handleBack()}>Atrás</button>
         </div>
     );
 }

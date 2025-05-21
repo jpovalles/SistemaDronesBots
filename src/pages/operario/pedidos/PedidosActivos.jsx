@@ -35,37 +35,18 @@ function PedidosActivos() {
         fetchData();
     }, [refreshTrigger]);
     
-        const fetchUltimoLog = async (idReserva) => {
-            try {
-                const log = await obtenerUltimoLogReserva(idReserva);
-                if (log) {
-                    const { estado } = log;
-                    return estado;
-                } else {
-                    return "Sin estado";
-                }
-            } catch (error) {
-                console.error("Error al obtener el último log:", error);
-                return "Error";
+    const fetchUltimoLog = async (idReserva) => {
+        try {
+            const log = await obtenerUltimoLogReserva(idReserva);
+            if (log) {
+                const { estado } = log;
+                return estado;
+            } else {
+                return "Sin estado";
             }
-        }
-    
-    const getEstadoColor = (estado) => {
-        switch(estado) {
-            case "En camino":
-                return "#FFD700"; 
-            case "Retornando":
-                return "#FFD700";
-            case "En base":
-                return "#FF4136";
-            case "Iniciando pedido":
-                return "#c0c0c0";
-            case "Esperando QR":
-                return "#FFD700";
-            case "Entregado":
-                return "#2ECC40";
-            default:
-                return "#FFFFFF";
+        } catch (error) {
+            console.error("Error al obtener el último log:", error);
+            return "Error";
         }
     }
 
@@ -79,6 +60,17 @@ function PedidosActivos() {
         setPedidoSeleccionado(null);
     }
 
+    // Determinar la clase de estado basada en el texto
+    const getEstadoClass = (estado) => {
+        const estadoLower = estado.toLowerCase();
+        if (estadoLower.includes('en camino')) return 'estado-en-camino';
+        if (estadoLower.includes('retornando')) return 'estado-retornando';
+        if (estadoLower.includes('error')) return 'estado-error';
+        if (estadoLower.includes('hacia base')) return 'estado-hacia-base';
+        if (estadoLower.includes('entregado')) return 'estado-entregado';
+        return '';
+    };
+
     // Si hay un pedido seleccionado, mostrar la vista de detalles
     if (pedidoSeleccionado) {
         return <PedidosActivosOjo pedido={pedidoSeleccionado} onClose={handleCerrarDetalles} />;
@@ -86,56 +78,57 @@ function PedidosActivos() {
 
     // De lo contrario, mostrar la tabla de pedidos activos
     return (
-    <div className="pedidos-container-principal">
-
-    <table className="pedidos-table-act">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Tipo</th>
-                <th>Operario asociado</th>
-                <th>Remitente</th>
-                <th>Fecha de inicio</th>
-                <th>Hora de inicio</th>
-                <th>Origen</th>
-                <th>Destino</th>
-                <th>Estado</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {dataActivos.map((pedido, index) => (
-                
-                <tr key={pedido.id}>
-                    <td>{pedido.id}</td>
-                    <td>Envio</td>
-                    <td>{pedido.operario}</td>
-                    <td>{pedido.remitente_nombre}</td>
-                    <td>{pedido.fecha.split('T')[0]}</td>
-                    <td>{pedido.hora}</td>
-                    <td>{pedido.origen}</td>
-                    <td>{pedido.destino}</td>
-                    <td>
-                        <div 
-                            
-                            className="botones-estado-act"
-                        >
-                            {pedido.ultimoEstado}
-                        </div>
-                    </td>
-                    <td className="icono-ojo">
-                        <button 
-                            className="btn-ojo" 
-                            onClick={() => handleVerDetalles(pedido)}
-                        >
-                            <img src="/ojo-icon.png" alt="Ver detalles" className="imagen-ojo" />
-                        </button>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-        </table>
-    </div>
+        <div className="pedidos-container-principal">
+            <div style={{ overflowX: 'auto' }}>
+                <table className="pedidos-table-act">
+                    
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Tipo</th>
+                            <th>Operario asociado</th>
+                            <th>Remitente</th>
+                            <th>Fecha de inicio</th>
+                            <th>Hora de inicio</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {dataActivos.map((pedido, index) => (
+                            <tr key={pedido.id}>
+                                <td>{pedido.id}</td>
+                                <td>Envio</td>
+                                <td>{pedido.operario}</td>
+                                <td>{pedido.remitente_nombre}</td>
+                                <td>{pedido.fecha.split('T')[0]}</td>
+                                <td>{pedido.hora}</td>
+                                <td>{pedido.origen}</td>
+                                <td>{pedido.destino}</td>
+                                <td>
+                                    <div 
+                                        className={`botones-estado-act ${getEstadoClass(pedido.ultimoEstado)}`}
+                                        title={pedido.ultimoEstado} // Agregar título para mostrar el texto completo al hover
+                                    >
+                                        {pedido.ultimoEstado}
+                                    </div>
+                                </td>
+                                <td className="icono-ojo">
+                                    <button 
+                                        className="btn-ojo" 
+                                        onClick={() => handleVerDetalles(pedido)}
+                                    >
+                                        <img src="/ojo-icon.png" alt="Ver detalles" className="imagen-ojo" />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 }
 
