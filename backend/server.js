@@ -131,6 +131,27 @@ app.get('/reservas/:idReserva/estado', async (req, res) => {
     }
 });
 
+// obtener todos los logs de una reserva
+app.get('/reservas/:idReserva/logs', async (req, res) => {
+    const { idReserva } = req.params;
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha ASC, hora ASC',
+            [idReserva]
+        );
+
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows);
+        } else {
+            res.status(204).send();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los logs de la reserva' });
+    }
+});
+
 // añadir estado a bitacora de dispositivos
 app.post('/dispositivos/:idDispositivo/estado', async (req, res) => {
     const { idDispositivo } = req.params;

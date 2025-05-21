@@ -61,6 +61,18 @@ export async function obtenerUltimoLogReserva(idReserva) {
     }
 }
 
+// obtener todos los logs de una reserva
+export async function obtenerLogsReserva(idReserva) {
+    const response = await fetch(`${API_URL}/reservas/${idReserva}/logs`);
+    if (response.status === 200) {
+        return response.json();
+    } else if (response.status === 204) {
+        return null;
+    } else {
+        throw new Error("Error obteniendo los logs de la reserva");
+    }
+}
+
 // añadir estado a bitacora de dispositivos
 export async function agregarEstadoDispositivo({idDispositivo, hora, fecha, estado}) {
     const response = await fetch(`${API_URL}/dispositivos/${idDispositivo}/estado`, {

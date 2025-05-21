@@ -4,6 +4,7 @@
   border-radius: 16px;
   color: white;
   font-family: sans-serif;
+  box-sizing: content-box;
   /* max-width: 70%; */
 }
 
@@ -59,6 +60,7 @@
 
 .pedidos-table-act th {
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .pedidos-table-act tbody tr:hover {

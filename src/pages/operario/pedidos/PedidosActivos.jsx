@@ -91,8 +91,8 @@ function PedidosActivos() {
     <table className="pedidos-table-act">
         <thead>
             <tr>
-                <th>Id del pedido</th>
-                <th>Tipo de servicio</th>
+                <th>Id</th>
+                <th>Tipo</th>
                 <th>Operario asociado</th>
                 <th>Remitente</th>
                 <th>Fecha de inicio</th>
