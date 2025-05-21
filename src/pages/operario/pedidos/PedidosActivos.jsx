@@ -54,10 +54,11 @@ function PedidosActivos() {
     const handleVerDetalles = (pedido) => {
         setPedidoSeleccionado(pedido);
     }
-
+    
     // Cierra la vista de detalles
     const handleCerrarDetalles = () => {
         setPedidoSeleccionado(null);
+        setRefreshTrigger(prev => prev + 1);
     }
 
     // Determinar la clase de estado basada en el texto

@@ -39,21 +39,22 @@ app.post('/confirmar-entrega/:idReserva', async (req, res) => {
         await pool.query('BEGIN');
 
         const result = await pool.query(
-            'SELECT hora FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha DESC, hora DESC LIMIT 1',
+            'SELECT * FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha DESC, hora DESC LIMIT 1',
             [idReserva]
         );
 
         const ultimaHora = result.rows[0].hora;
+        const fecha = result.rows[0].fecha;
         const [horas, minutos, segundos] = ultimaHora.split(":").map(Number);
-        const fecha = new Date(0, 0, 0, horas, minutos, segundos);
+        const fechaC = new Date(0, 0, 0, horas, minutos, segundos);
     
         // Sumar los minutos
-        fecha.setMinutes(fecha.getMinutes() + 4);
+        fechaC.setMinutes(fechaC.getMinutes() + 4);
     
         // Formatear nuevamente como hh:mm:ss
-        const hh = String(fecha.getHours()).padStart(2, "0");
-        const mm = String(fecha.getMinutes()).padStart(2, "0");
-        const ss = String(fecha.getSeconds()).padStart(2, "0");
+        const hh = String(fechaC.getHours()).padStart(2, "0");
+        const mm = String(fechaC.getMinutes()).padStart(2, "0");
+        const ss = String(fechaC.getSeconds()).padStart(2, "0");
     
         const hora = `${hh}:${mm}:${ss}`;
 
