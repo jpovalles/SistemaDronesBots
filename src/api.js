@@ -253,3 +253,8 @@ export async function verificarDispositivo(id){
     const response = await fetch(`${API_URL}/verificar/${id}`);
     return response.json();
 }
+
+export async function obtenerReservas(){
+    const response = await fetch(`${API_URL}/reservas`);
+    return response.json();
+}
