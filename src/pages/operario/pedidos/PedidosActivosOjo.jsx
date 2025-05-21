@@ -3,14 +3,9 @@ import {useState, useEffect} from "react";
 import "./PedidosActivosOjo.css";
 import { QRCodeCanvas } from "qrcode.react";
 
-import { obtenerLogsReserva, agregarEstadoReserva, agregarEstadoDispositivo, API_URL} from "../../../api";
+import { obtenerLogsReserva, agregarEstadoReserva, agregarEstadoDispositivo, API_URL, obtenerUltimoLogReserva} from "../../../api";
 
 function DetallePedido({ pedido, onClose }) {
-  const [bitacora, setBitacora] = useState([]);
-  const [indiceEstado, setIndiceEstado] = useState(0);
-
-  const confirmacionUrl = `${API_URL.slice(0,-5)}:${5173}/confirmar-entrega?id=${pedido.id}`;
-  console.log(confirmacionUrl);
 
   const estados = [
     "En ruta al destino",
@@ -18,6 +13,12 @@ function DetallePedido({ pedido, onClose }) {
     `Ubicacion: ${pedido.destino}`,
     "Esperando código QR",
   ];
+
+  const [bitacora, setBitacora] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const confirmacionUrl = `${API_URL.slice(0,-5)}:${5173}/confirmar-entrega?id=${pedido.id}`;
+  console.log(confirmacionUrl);
 
   const sumarMinutos = (horaStr, i) => {
     const minutosASumar = (i+1) * 4;
@@ -37,30 +38,34 @@ function DetallePedido({ pedido, onClose }) {
 
   const handlePlay = async (id, dispositivo, fecha, hora) => {
           console.log(id, fecha, hora, dispositivo);
-          const nuevaHora = sumarMinutos(hora, indiceEstado);
+
+          const log = await obtenerUltimoLogReserva(id);
+          const indice = estados.findIndex((estado) => estado === log.estado);
+          const nuevoIndice = indice !== -1 ? indice + 1 : 0;
+          const nuevaHora = sumarMinutos(hora, nuevoIndice);
 
           await agregarEstadoReserva({
               idReserva: id,
               hora: nuevaHora,
               fecha: fecha,
-              estado: estados[indiceEstado]
+              estado: estados[nuevoIndice]
           });
   
           await agregarEstadoDispositivo({
               idDispositivo: dispositivo,
               hora: nuevaHora,
               fecha: fecha,
-              estado: estados[indiceEstado]
+              estado: estados[nuevoIndice]
           });
   
-          setIndiceEstado(prev => prev + 1);
+          setRefreshTrigger(prev => prev + 1);
       }
 
   useEffect(() => {
     obtenerLogsReserva(pedido.id)
         .then(data => setBitacora(data))
         .catch(err => console.error(err));
-  }, [indiceEstado]);
+  }, [refreshTrigger]);
 
   console.log(bitacora);
 
@@ -87,8 +92,8 @@ function DetallePedido({ pedido, onClose }) {
           </div>
 
           <div className="detalle-info-row">
-            <span className="info-label">Hora de inicio</span>
-            <span className="info-value">{pedido.hora}</span>
+            <span className="info-label">Fecha de inicio</span>
+            <span className="info-value">{pedido.fecha.split('T')[0]}</span>
           </div>
 
           <div className="detalle-info-row">
@@ -97,8 +102,8 @@ function DetallePedido({ pedido, onClose }) {
           </div>
 
           <div className="detalle-info-row">
-            <span className="info-label">Operario asociado</span>
-            <span className="info-value">{pedido.operario}</span>
+            <span className="info-label">Hora de inicio</span>
+            <span className="info-value">{pedido.hora}</span>
           </div>
 
           <div className="detalle-info-row">
@@ -106,7 +111,10 @@ function DetallePedido({ pedido, onClose }) {
             <span className="info-value">{pedido.origen}</span>
           </div>
 
-          <div></div>
+          <div className="detalle-info-row">
+            <span className="info-label">Operario asociado</span>
+            <span className="info-value">{pedido.operario}</span>
+          </div>
 
           <div className="detalle-info-row">
             <span className="info-label">Destino</span>

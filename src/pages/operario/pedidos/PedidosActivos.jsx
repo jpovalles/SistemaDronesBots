@@ -35,20 +35,20 @@ function PedidosActivos() {
         fetchData();
     }, [refreshTrigger]);
     
-        const fetchUltimoLog = async (idReserva) => {
-            try {
-                const log = await obtenerUltimoLogReserva(idReserva);
-                if (log) {
-                    const { estado } = log;
-                    return estado;
-                } else {
-                    return "Sin estado";
-                }
-            } catch (error) {
-                console.error("Error al obtener el último log:", error);
-                return "Error";
+    const fetchUltimoLog = async (idReserva) => {
+        try {
+            const log = await obtenerUltimoLogReserva(idReserva);
+            if (log) {
+                const { estado } = log;
+                return estado;
+            } else {
+                return "Sin estado";
             }
+        } catch (error) {
+            console.error("Error al obtener el último log:", error);
+            return "Error";
         }
+    }
     
     const getEstadoColor = (estado) => {
         switch(estado) {
@@ -77,6 +77,7 @@ function PedidosActivos() {
     // Cierra la vista de detalles
     const handleCerrarDetalles = () => {
         setPedidoSeleccionado(null);
+        setRefreshTrigger(prev => prev + 1);
     }
 
     // Si hay un pedido seleccionado, mostrar la vista de detalles
