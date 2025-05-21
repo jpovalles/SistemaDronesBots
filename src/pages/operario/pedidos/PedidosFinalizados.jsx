@@ -109,79 +109,6 @@ function PedidosFinalizados() {
         }
     };
 
-    const eliminarVideo = async (idPedido) => {
-        // Actualizar estado de carga solo para este pedido
-        setLoadingStates(prev => ({ ...prev, [idPedido]: true }));
-        // Limpiar mensajes anteriores
-        setGlobalMessage({ text: "", type: "" });
-        
-        try {
-            // Enviar solicitud DELETE con el ID del pedido
-            const response = await axios.delete("http://localhost:5000/eliminar-video", {
-                data: { idPedido } // Enviar el ID en el cuerpo de la solicitud DELETE
-            });
-            setGlobalMessage({ 
-                text: `Video ${pedidoToVideoMap[idPedido]} eliminado exitosamente para el pedido ${idPedido}`,
-                type: "success" 
-            });
-            console.log(`Respuesta del servidor para pedido ${idPedido}:`, response.data);
-        } catch (error) {
-            console.error(`Error al eliminar el video para pedido ${idPedido}:`, error);
-            setGlobalMessage({ 
-                text: error.response?.data?.error || `Error al eliminar el video ${pedidoToVideoMap[idPedido]} para el pedido ${idPedido}`,
-                type: "error" 
-            });
-        } finally {
-            setLoadingStates(prev => ({ ...prev, [idPedido]: false }));
-        }
-    };
-
-    const descargarVideo = async (idPedido) => {
-        // Actualizar estado de carga solo para este pedido
-        setLoadingStates(prev => ({ ...prev, [idPedido]: true }));
-        // Limpiar mensajes anteriores
-        setGlobalMessage({ text: "", type: "" });
-        
-        try {
-            // Crear la URL para la descarga
-            const downloadUrl = `http://localhost:5000/descargar-video/${idPedido}`;
-            
-            // Hacer una solicitud fetch para verificar primero si el video existe
-            const checkResponse = await fetch(downloadUrl, { method: 'HEAD' });
-            
-            if (!checkResponse.ok) {
-                throw new Error('El video no está disponible para descarga');
-            }
-            
-            // Descargar el archivo usando un enlace
-            const response = await fetch(downloadUrl);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', pedidoToVideoMap[idPedido] || `video-${idPedido}.mp4`);
-            document.body.appendChild(link);
-            link.click();
-            
-            // Limpiar
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            
-            setGlobalMessage({ 
-                text: `Video ${pedidoToVideoMap[idPedido]} descargado exitosamente para el pedido ${idPedido}`,
-                type: "success" 
-            });
-        } catch (error) {
-            console.error(`Error al descargar el video para pedido ${idPedido}:`, error);
-            setGlobalMessage({ 
-                text: `Error al descargar el video: ${error.message}`,
-                type: "error" 
-            });
-        } finally {
-            setLoadingStates(prev => ({ ...prev, [idPedido]: false }));
-        }
-    };
-
     return (
     <div className="pedidos-container-finalizados">
         {globalMessage.text && (
@@ -237,20 +164,6 @@ function PedidosFinalizados() {
                                     className="video-btn upload-btn"
                                 >
                                     {loadingStates[pedido.idPedido] ? "Procesando..." : "Subir Video"}
-                                </button>
-                                <button 
-                                    onClick={() => descargarVideo(pedido.idPedido)}
-                                    disabled={loadingStates[pedido.idPedido]} 
-                                    className="video-btn download-btn"
-                                >
-                                    {loadingStates[pedido.idPedido] ? "Procesando..." : "Descargar Video"}
-                                </button>
-                                <button 
-                                    onClick={() => eliminarVideo(pedido.idPedido)} 
-                                    disabled={loadingStates[pedido.idPedido]} 
-                                    className="video-btn delete-btn"
-                                >
-                                    {loadingStates[pedido.idPedido] ? "Procesando..." : "Eliminar Video"}
                                 </button>
                             </div>
                         </td>
