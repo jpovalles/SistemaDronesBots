@@ -440,6 +440,24 @@ app.get("/tipos", async(req, res) => {
     }
 })
 
+//Verificar si hay dispositivos en activo
+app.get("/verificar/:disp", async (req, res) => {
+    try {
+        const { disp } = req.params;
+        const result = await pool.query(
+            `SELECT COUNT(*) FROM reserva WHERE estado = 2 AND dispositivo = $1`,
+            [disp]
+        );
+        
+        const count = parseInt(result.rows[0].count, 10);
+        res.json({ cantidad: count });
+        
+    } catch (error) {
+        console.error("Error al verificar:", error);
+        res.status(500).json({ error: "Error al verificar dispositivo" });
+    }
+});
+
 /*
 app.get('/confirmar-entrega/', async (req, res) => {
     console.log("Yujuuuuuuu")

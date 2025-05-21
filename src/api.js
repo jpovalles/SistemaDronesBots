@@ -1,4 +1,4 @@
-const API_URL = 'http://192.168.1.23:5000';
+const API_URL = "http://localhost:5000";
 
 // Añadir reserva
 export async function agregarReserva({ fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario }){
@@ -246,4 +246,10 @@ export async function actualizarDispositivoBateria(idn, capacidad, tipo, estado,
 
     const data = await response.json();
     return data;
+}
+
+//Verificar si hay dispositivos en activo
+export async function verificarDispositivo(id){
+    const response = await fetch(`${API_URL}/verificar/${id}`);
+    return response.json();
 }
