@@ -26,6 +26,68 @@ app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
 })
 
+// escanear QR y confirmar entrega
+app.post('/confirmar-entrega/:idReserva', async (req, res) => {
+    const { idReserva } = req.params;
+    const estado = 3;
+    const log = "Pedido completado";
+    
+    // Generar hora y fecha actuales
+
+    try {
+        await pool.query('BEGIN');
+
+        const result = await pool.query(
+            'SELECT hora FROM historial_servicio WHERE id_reserva = $1 ORDER BY fecha DESC, hora DESC LIMIT 1',
+            [idReserva]
+        );
+
+        const ultimaHora = result.rows[0].hora;
+        const [horas, minutos, segundos] = ultimaHora.split(":").map(Number);
+        const fecha = new Date(0, 0, 0, horas, minutos, segundos);
+    
+        // Sumar los minutos
+        fecha.setMinutes(fecha.getMinutes() + 4);
+    
+        // Formatear nuevamente como hh:mm:ss
+        const hh = String(fecha.getHours()).padStart(2, "0");
+        const mm = String(fecha.getMinutes()).padStart(2, "0");
+        const ss = String(fecha.getSeconds()).padStart(2, "0");
+    
+        const hora = `${hh}:${mm}:${ss}`;
+
+        // 1. Actualizar estado de reserva y obtener dispositivo
+        const updateReserva = await pool.query(
+            'UPDATE reserva SET estado = $1 WHERE id = $2 RETURNING dispositivo',
+            [estado, idReserva]
+        );
+
+        if (updateReserva.rowCount === 0) throw new Error('Reserva no encontrada');
+
+        const idDispositivo = updateReserva.rows[0].dispositivo;
+
+        // 2. Añadir a historial_servicio
+        await pool.query(
+            'INSERT INTO historial_servicio (id_reserva, fecha, hora, estado) VALUES ($1, $2, $3, $4)',
+            [idReserva, fecha, hora, log]
+        );
+
+        // 3. Añadir a historial_dispositivo
+        await pool.query(
+            'INSERT INTO historial_dispositivo (id_dispositivo, fecha, hora, estado) VALUES ($1, $2, $3, $4)',
+            [idDispositivo, fecha, hora, log]
+        );
+
+        await pool.query('COMMIT');
+        res.status(200).json({ message: 'Entrega confirmada y bitácoras actualizadas' });
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error);
+        res.status(500).json({ error: 'Error al confirmar entrega' });
+    }
+});
+
 
 // CRUD reservas
 app.post('/reservas', async (req, res) => {

@@ -15,6 +15,7 @@ import VideosServicios from './pages/admin/VideosServicios';
 import InventarioRobots from './pages/admin/InventarioRobots';
 import ProtectedRoute from './pages/ProtectedRoute';
 import './App.css'
+import Confirmacion from './pages/operario/pedidos/Confirmacion';
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
             <Route path="/administrador/robots" element={<LayoutAdmin Opcion={InventarioRobots}/>}/>
             <Route path="/operario/robots" element={<LayoutOperario Opcion={InventarioRobots}/>}/>
           </Route>
+          <Route path="/confirmar-entrega" element={<Confirmacion/>} />
         </Routes>
     </>
   )
