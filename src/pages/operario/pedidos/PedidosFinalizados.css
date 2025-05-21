@@ -118,3 +118,14 @@
     cursor: not-allowed;
     transform: none;
 }
+
+.download-btn { 
+    background-color: #28a745; 
+    color: white; 
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.download-btn:hover { 
+    background-color: #218838; 
+    transform: translateY(-2px);
+}

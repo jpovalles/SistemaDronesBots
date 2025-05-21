@@ -565,3 +565,58 @@ app.delete("/eliminar-video", async (req, res) => {
         res.status(500).json({ error: "Error al eliminar el video", detalles: error.message });
     }
 });
+
+// Ruta para descargar un video específico de S3 según el ID del pedido
+app.get("/descargar-video/:idPedido", async (req, res) => {
+    const { idPedido } = req.params;
+    
+    if (!idPedido) {
+        return res.status(400).json({ error: "Se requiere un ID de pedido" });
+    }
+    
+    const videoFileName = pedidoToVideoMap[idPedido];
+    
+    if (!videoFileName) {
+        return res.status(404).json({ error: `No hay video asociado al pedido ${idPedido}` });
+    }
+    
+    const params = {
+        Bucket: BUCKET,
+        Key: videoFileName
+    };
+    
+    try {
+        console.log(`Intentando obtener video ${videoFileName} del bucket: ${BUCKET}`);
+        
+        // Verificar primero si el objeto existe en S3
+        try {
+            await s3.headObject(params).promise();
+        } catch (headErr) {
+            console.error("Error al verificar archivo en S3:", headErr);
+            return res.status(404).json({ error: "El video no existe en S3" });
+        }
+        
+        // Configurar los headers para la descarga
+        res.setHeader('Content-Disposition', `attachment; filename=${videoFileName}`);
+        res.setHeader('Content-Type', 'video/mp4');
+        
+        // Crear un stream de lectura desde S3 y enviarlo directamente al response
+        const s3Stream = s3.getObject(params).createReadStream();
+        
+        // Manejar errores del stream
+        s3Stream.on('error', (err) => {
+            console.error("Error en el stream de S3:", err);
+            if (!res.headersSent) {
+                return res.status(500).json({ error: "Error al procesar el video" });
+            }
+        });
+        
+        // Pipe el stream a la respuesta
+        s3Stream.pipe(res);
+        
+        console.log(`Descarga de video ${videoFileName} iniciada`);
+    } catch (error) {
+        console.error("Error al descargar:", error);
+        res.status(500).json({ error: "Error al descargar el video", detalles: error.message });
+    }
+});
