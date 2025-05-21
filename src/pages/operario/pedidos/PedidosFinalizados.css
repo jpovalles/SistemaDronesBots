@@ -34,3 +34,87 @@
 .botones-estado{
     width: 100%;
  }
+
+ /* Estilos para mensajes globales */
+.global-message {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.global-message.success {
+    background-color: #2ecc71;
+}
+
+.global-message.error {
+    background-color: #e74c3c;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Estilos para los botones de video */
+.video-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.video-btn {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.upload-btn {
+    background-color: #3498db;
+    color: white;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+.upload-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.video-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
