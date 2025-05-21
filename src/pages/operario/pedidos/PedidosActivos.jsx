@@ -53,6 +53,7 @@ function PedidosActivos() {
     // Maneja el clic en el icono de ojo para mostrar detalles
     const handleVerDetalles = (pedido) => {
         setPedidoSeleccionado(pedido);
+        
     }
 
     // Cierra la vista de detalles
