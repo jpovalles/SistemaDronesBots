@@ -522,6 +522,26 @@ app.get("/verificar/:disp", async (req, res) => {
     }
 });
 
+//Obtener servicios terminados
+app.get("/reservas", async(req, res) => {
+    try{
+        const result = await pool.query(`SELECT r.id AS pedido, r.fecha AS fecha, r.hora AS hora, u.nombre AS operador, r.remitente AS cliente, dt.tipo AS tipo, est.estado AS estado
+            FROM reserva AS r
+            INNER JOIN estado_reserva AS est
+            ON r.estado = est.id
+            INNER JOIN devices AS d
+            ON r.dispositivo = d.id
+            INNER JOIN device_type AS dt
+            ON d.tipo = dt.id
+            INNER JOIN users AS u
+            ON r.operario = u.nombre_usuario
+            WHERE r.estado = 3 OR r.estado = 4`);
+        res.json(result.rows);
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    }
+})
+
 /*
 app.get('/confirmar-entrega/', async (req, res) => {
     console.log("Yujuuuuuuu")

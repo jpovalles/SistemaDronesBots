@@ -43,27 +43,23 @@
 
 .sub-inicio{
     font-weight: bold;
-    margin-left: -15svh;
+    margin-left: -35svh;
     font-size: 18px;
 }
-.sub-final{
-    font-weight: bold;
-    margin-left: 12vh;
-    font-size: 18px;
-}
+
 .sub-vendedor{
     font-weight: bold;
-    margin-left: 7vh;
+    margin-left: 28vh;
     font-size: 18px;
 }
 .sub-cliente{
     font-weight: bold;
-    margin-left: 9vh;
+    margin-left: 25vh;
     font-size: 18px;
 }
 .sub-tipoDisp{
     font-weight: bold;
-    margin-left: 10vh;
+    margin-left: 25vh;
     font-size: 18px;
 }
 
