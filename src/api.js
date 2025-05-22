@@ -19,16 +19,6 @@ export async function obtenerReservasPorEstado(estado) {
     }
     return response.json();
 }
-export async function obtenerReservasFinalizadas() {
-    const response = await fetch(`${API_URL}/reservas/finalizados`);
-    
-    if (!response.ok) {
-        throw new Error('Error al obtener las reservas');
-    }
-    return response.json();
-}
-
-
 
 // actualizar estado de reserva
 export async function actualizarEstadoReserva(idReserva, estado) {
@@ -261,6 +251,15 @@ export async function actualizarDispositivoBateria(idn, capacidad, tipo, estado,
 //Verificar si hay dispositivos en activo
 export async function verificarDispositivo(id){
     const response = await fetch(`${API_URL}/verificar/${id}`);
+    return response.json();
+}
+
+export async function obtenerReservasFinalizadas() {
+    const response = await fetch(`${API_URL}/reservas/finalizados`);
+    
+    if (!response.ok) {
+        throw new Error('Error al obtener las reservas');
+    }
     return response.json();
 }
 
