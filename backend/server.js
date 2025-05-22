@@ -739,3 +739,238 @@ app.get("/descargar-video/:idPedido", async (req, res) => {
         res.status(500).json({ error: "Error al descargar el video", detalles: error.message });
     }
 });
+
+
+
+// Ruta para reproducir un video directamente (streaming)
+app.get("/stream-video/:key", async (req, res) => {
+    const { key } = req.params;
+    
+    if (!key) {
+        return res.status(400).json({ error: "Se requiere la clave del video" });
+    }
+    
+    const params = {
+        Bucket: BUCKET,
+        Key: key
+    };
+    
+    try {
+        // Verificar si el video existe en S3
+        try {
+            await s3.headObject(params).promise();
+        } catch (headErr) {
+            console.error("Error al verificar archivo en S3:", headErr);
+            return res.status(404).json({ error: "El video no existe en S3" });
+        }
+        
+        // Configurar headers para streaming
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Accept-Ranges', 'bytes');
+        
+        // Crear un stream desde S3 al cliente
+        const s3Stream = s3.getObject(params).createReadStream();
+        
+        s3Stream.on('error', (err) => {
+            console.error("Error en el stream de S3:", err);
+            if (!res.headersSent) {
+                return res.status(500).json({ error: "Error al procesar el video" });
+            }
+        });
+        
+        s3Stream.pipe(res);
+    } catch (error) {
+        console.error("Error al reproducir video:", error);
+        res.status(500).json({ error: "Error al reproducir el video", detalles: error.message });
+    }
+});
+
+// Ruta para eliminar varios videos a la vez
+app.post("/eliminar-videos", async (req, res) => {
+    const { keys } = req.body;
+    
+    if (!keys || !Array.isArray(keys) || keys.length === 0) {
+        return res.status(400).json({ error: "Se requiere un array de claves de videos" });
+    }
+    
+    try {
+        const deleteParams = {
+            Bucket: BUCKET,
+            Delete: {
+                Objects: keys.map(key => ({ Key: key })),
+                Quiet: false
+            }
+        };
+        
+        console.log(`Intentando eliminar ${keys.length} videos del bucket: ${BUCKET}`);
+        const deleteResult = await s3.deleteObjects(deleteParams).promise();
+        console.log(`Videos eliminados: ${deleteResult.Deleted.length}`);
+        
+        if (deleteResult.Errors && deleteResult.Errors.length > 0) {
+            return res.status(207).json({
+                mensaje: `Se eliminaron ${deleteResult.Deleted.length} videos, pero hubo errores con ${deleteResult.Errors.length} videos`,
+                errores: deleteResult.Errors
+            });
+        }
+        
+        res.json({ mensaje: `${deleteResult.Deleted.length} videos eliminados correctamente` });
+    } catch (error) {
+        console.error("Error al eliminar videos:", error);
+        res.status(500).json({ error: "Error al eliminar videos", detalles: error.message });
+    }
+});
+
+app.get("/videos/estadisticas", async (req, res) => {
+    try {
+        console.log("Obteniendo estadísticas dinámicas del bucket S3...");
+        
+        const params = {
+            Bucket: BUCKET
+        };
+        
+        // Verificar conexión con S3
+        try {
+            await s3.listBuckets().promise();
+        } catch (s3Error) {
+            console.error("Error de conexión con S3:", s3Error);
+            // Devolver estadísticas por defecto en caso de error de conexión
+            return res.json({
+                totalVideos: 0,
+                videosUltimoMes: 0,
+                espacioUtilizado: "0 MB",
+                error: "Error de conexión con S3"
+            });
+        }
+        
+        // Obtener todos los objetos del bucket
+        const data = await s3.listObjectsV2(params).promise();
+        
+        if (!data.Contents || data.Contents.length === 0) {
+            console.log("Bucket vacío o no se encontraron archivos");
+            return res.json({
+                totalVideos: 0,
+                videosUltimoMes: 0,
+                espacioUtilizado: "0 MB"
+            });
+        }
+        
+        // Filtrar solo archivos de video (.mp4)
+        const videos = data.Contents.filter(item => item.Key.endsWith('.mp4'));
+        
+        // Calcular estadísticas
+        const totalVideos = videos.length;
+        
+        // Calcular espacio total utilizado (en bytes)
+        const espacioTotalBytes = videos.reduce((total, video) => {
+            return total + (video.Size || 0);
+        }, 0);
+        
+        // Convertir bytes a MB con dos decimales
+        const espacioTotalMB = (espacioTotalBytes / (1024 * 1024)).toFixed(1);
+        
+        // Calcular videos del último mes
+        const fechaLimite = new Date();
+        fechaLimite.setMonth(fechaLimite.getMonth() - 1);
+        
+        const videosUltimoMes = videos.filter(video => {
+            const fechaVideo = new Date(video.LastModified);
+            return fechaVideo >= fechaLimite;
+        }).length;
+        
+        const estadisticas = {
+            totalVideos: totalVideos,
+            videosUltimoMes: videosUltimoMes,
+            espacioUtilizado: `${espacioTotalMB} MB`
+        };
+        
+        console.log("Estadísticas calculadas:", estadisticas);
+        res.json(estadisticas);
+        
+    } catch (error) {
+        console.error("Error al obtener estadísticas de S3:", error);
+        
+        // En caso de error, devolver estadísticas por defecto
+        res.json({
+            totalVideos: 0,
+            videosUltimoMes: 0,
+            espacioUtilizado: "0 MB",
+            error: "Error al calcular estadísticas"
+        });
+    }
+});
+
+// Función para generar un nombre consistente basado en el nombre del archivo
+function getConsistentDeviceName(fileName) {
+    // Crear un hash simple basado en el nombre del archivo
+    let hash = 0;
+    for (let i = 0; i < fileName.length; i++) {
+        const char = fileName.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convertir a entero de 32 bits
+    }
+    
+    // Usar el hash para determinar consistentemente si es ROB o DRN
+    return Math.abs(hash) % 2 === 0 ? "ROB" : "DRN";
+}
+
+app.get("/videos", async (req, res) => {
+    try {
+        console.log("Obteniendo lista de videos del bucket S3...");
+        
+        // Verifica primero la conexión con S3
+        try {
+            await s3.listBuckets().promise();
+        } catch (s3Error) {
+            console.error("Error de conexión con S3:", s3Error);
+            // Enviar array vacío en caso de error de conexión S3
+            return res.json([]);
+        }
+        
+        const params = {
+            Bucket: BUCKET
+        };
+        
+        // Listar todos los objetos en el bucket
+        const data = await s3.listObjectsV2(params).promise();
+        
+        if (!data.Contents || data.Contents.length === 0) {
+            console.log("Bucket vacío o no se encontraron archivos");
+            return res.json([]);
+        }
+        
+        // Procesar solo archivos de video
+        const videos = data.Contents
+            .filter(item => item.Key.endsWith('.mp4'))
+            .map((item) => {
+                // Convertir tamaño de bytes a MB
+                const tamanioMB = (item.Size / (1024 * 1024)).toFixed(1);
+                
+                // Determinar tipo de dispositivo de forma consistente
+                let dispositivo;
+                if (item.Key.toLowerCase().includes("robot") || item.Key.toLowerCase().includes("rob")) {
+                    dispositivo = "ROB";
+                } else if (item.Key.toLowerCase().includes("drone") || item.Key.toLowerCase().includes("drn")) {
+                    dispositivo = "DRN";
+                } else {
+                    // Asignación consistente basada en el nombre del archivo
+                    dispositivo = getConsistentDeviceName(item.Key);
+                }
+                
+                return {
+                    key: item.Key,
+                    id: item.Key.split('.')[0],
+                    tamaño: `${tamanioMB} MB`,
+                    fecha: item.LastModified, 
+                    dispositivo: dispositivo
+                };
+            });
+
+        console.log(`Encontrados ${videos.length} videos en el bucket`);
+        res.json(videos);
+        
+    } catch (error) {
+        console.error("Error al obtener lista de videos:", error);
+        // Enviar array vacío en caso de error general
+        res.json([]);
+    }
+});
