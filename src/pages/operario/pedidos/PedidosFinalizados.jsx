@@ -42,30 +42,7 @@ function PedidosFinalizados() {
         }
     }
 
-    const subirVideo = async (idPedido) => {
-        // Actualizar estado de carga solo para este pedido
-        setLoadingStates(prev => ({ ...prev, [idPedido]: true }));
-        // Limpiar mensajes anteriores
-        setGlobalMessage({ text: "", type: "" });
-        
-        try {
-            // Enviar el ID del pedido al servidor
-            const response = await axios.post(`${API_URL}/subir-video`, { idPedido });
-            setGlobalMessage({ 
-                text: `Video ${pedidoToVideoMap[idPedido]} subido exitosamente para el pedido ${idPedido}`,
-                type: "success" 
-            });
-            console.log(`Respuesta del servidor para pedido ${idPedido}:`, response.data);
-        } catch (error) {
-            console.error(`Error al subir el video para pedido ${idPedido}:`, error);
-            setGlobalMessage({ 
-                text: error.response?.data?.error || `Error al subir el video ${pedidoToVideoMap[idPedido]} para el pedido ${idPedido}`,
-                type: "error" 
-            });
-        } finally {
-            setLoadingStates(prev => ({ ...prev, [idPedido]: false }));
-        }
-    };
+    
 
     useEffect(() => {
             const fetchData = async () => {
@@ -112,6 +89,31 @@ function PedidosFinalizados() {
             setPedidoSeleccionado(null);
             setRefreshTrigger(prev => prev + 1);
         }
+        const subirVideo = async (idPedido) => {
+            // Actualizar estado de carga solo para este pedido
+            setLoadingStates(prev => ({ ...prev, [idPedido]: true }));
+            // Limpiar mensajes anteriores
+            setGlobalMessage({ text: "", type: "" });
+            
+            try {
+                // Enviar el ID del pedido al servidor
+                const response = await axios.post(`${API_URL}/subir-video`, { idPedido });
+                setGlobalMessage({ 
+                    text: `Video subido exitosamente para el pedido ${idPedido}`,
+                    type: "success" 
+                });
+                console.log(`Respuesta del servidor para pedido ${idPedido}:`, response.data);
+            } catch (error) {
+                console.error(`Error al subir el video para pedido ${idPedido}:`, error);
+                setGlobalMessage({ 
+                    text: error.response?.data?.error || `Error al subir el video para el pedido ${idPedido}`,
+                    type: "error" 
+                });
+            } finally {
+                setLoadingStates(prev => ({ ...prev, [idPedido]: false }));
+            }
+        };
+    
         const descargarVideo = async (idPedido) => {
             // Actualizar estado de carga solo para este pedido
             setLoadingStates(prev => ({ ...prev, [idPedido]: true }));
@@ -135,7 +137,7 @@ function PedidosFinalizados() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', pedidoToVideoMap[idPedido] || `video-${idPedido}.mp4`);
+                link.setAttribute('download', `video-pedido-${idPedido}.mp4`); // Nombre dinámico basado en el ID
                 document.body.appendChild(link);
                 link.click();
                 
@@ -144,11 +146,11 @@ function PedidosFinalizados() {
                 window.URL.revokeObjectURL(url);
                 
                 setGlobalMessage({ 
-                    text: `Video ${pedidoToVideoMap[idPedido]} descargado exitosamente para el pedido ${idPedido}`,
+                    text: `Video descargado exitosamente para el pedido ${idPedido}`,
                     type: "success" 
                 });
             } catch (error) {
-                console.error(`Error al descargar el video para pedido ${idPedido}: `, error);
+                console.error(`Error al descargar el video para pedido ${idPedido}:`, error);
                 setGlobalMessage({ 
                     text: `Error al descargar el video: ${error.message}`,
                     type: "error" 
@@ -156,7 +158,7 @@ function PedidosFinalizados() {
             } finally {
                 setLoadingStates(prev => ({ ...prev, [idPedido]: false }));
             }
-    };
+        };
 
     if (pedidoSeleccionado) {
         return <PedidosActivosOjo pedido={pedidoSeleccionado} onClose={handleCerrarDetalles} />;
@@ -216,13 +218,21 @@ function PedidosFinalizados() {
                         <td>
                             {pedido.estado === "Entregado" && (
                                 <div className="video-actions">
-                                <button 
-                                    onClick={() => descargarVideo(pedido.id)}
-                                    disabled={loadingStates[pedido.id]} 
-                                    className="video-btn download-btn"
-                                >
-                                    {loadingStates[pedido.id] ? "Procesando..." : "Descargar"}
-                                </button>
+
+                                    <button 
+                                        onClick={() => subirVideo(pedido.id)} 
+                                        disabled={loadingStates[pedido.id]} 
+                                        className="video-btn upload-btn"
+                                    >
+                                        {loadingStates[pedido.id] ? "Procesando..." : "Subir"}
+                                    </button>
+                                    <button 
+                                        onClick={() => descargarVideo(pedido.id)}
+                                        disabled={loadingStates[pedido.id]} 
+                                        className="video-btn download-btn"
+                                    >
+                                        {loadingStates[pedido.id] ? "Procesando..." : "Descargar"}
+                                    </button>
                             </div>
                             )}
                         </td>

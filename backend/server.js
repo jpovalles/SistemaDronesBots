@@ -613,10 +613,6 @@ app.get("/reservas", async(req, res) => {
     }
 })
 
-
-
-
- 
 /////////////////////////////////////////////////// AWS S3 ///////////////////////////////////////////////////
 const AWS = require('aws-sdk');
 const fs = require('fs');
@@ -634,16 +630,6 @@ AWS.config.update({
 const s3 = new AWS.S3();
 const BUCKET = process.env.NOMBREBUCKET;
 
-// Mapeo de IDs de pedido a nombres de archivos de video
-const pedidoToVideoMap = {
-    123: "video-prueba.mp4",
-    124: "video-prueba2.mp4",
-    125: "video-prueba3.mp4",
-    126: "video-prueba4.mp4",
-    127: "video-prueba5.mp4"
-};
-
-// Ruta para subir un video específico a S3 según el ID del pedido
 app.post("/subir-video", async (req, res) => {
     const { idPedido } = req.body;
     
@@ -651,18 +637,34 @@ app.post("/subir-video", async (req, res) => {
         return res.status(400).json({ error: "Se requiere un ID de pedido" });
     }
     
-    const videoFileName = pedidoToVideoMap[idPedido];
+    // Generar nombre de archivo basado en el ID del pedido
+    const videoFileName = `video-pedido-${idPedido}.mp4`;
     
-    if (!videoFileName) {
-        return res.status(404).json({ error: `No hay video asociado al pedido ${idPedido}` });
+    // Buscar cualquier archivo de video disponible en la carpeta de videos
+    const videosDir = path.join(__dirname, "..", "public", "videos");
+    let videoPath = null;
+    
+    // Lista de archivos de video disponibles (puedes ajustar esta lista)
+    const availableVideos = [
+        "video-ruta.mp4",
+        "video-prueba.mp4",
+        "video-prueba2.mp4", 
+        "video-prueba3.mp4",
+        "video-prueba4.mp4",
+        "video-prueba5.mp4"
+    ];
+    
+    // Buscar el primer video disponible
+    for (const video of availableVideos) {
+        const testPath = path.join(videosDir, video);
+        if (fs.existsSync(testPath)) {
+            videoPath = testPath;
+            break;
+        }
     }
     
-    const videoPath = path.join(__dirname, "..", "public", "videos", videoFileName);
-    
-    // Verificar si el archivo existe
-    if (!fs.existsSync(videoPath)) {
-        console.error(`El archivo no existe en la ruta: ${videoPath}`);
-        return res.status(404).json({ error: "El archivo de video no existe en la ruta especificada" });
+    if (!videoPath) {
+        return res.status(404).json({ error: "No hay videos disponibles para subir" });
     }
     
     try {
@@ -671,7 +673,7 @@ app.post("/subir-video", async (req, res) => {
         
         const params = {
             Bucket: BUCKET,
-            Key: videoFileName,
+            Key: videoFileName, // Usar el nombre basado en el ID del pedido
             Body: fileContent,
             ContentType: "video/mp4"
         };
@@ -686,35 +688,6 @@ app.post("/subir-video", async (req, res) => {
     }
 });
 
-// Ruta para eliminar un video específico de S3 según el ID del pedido
-app.delete("/eliminar-video", async (req, res) => {
-    const { idPedido } = req.body;
-    
-    if (!idPedido) {
-        return res.status(400).json({ error: "Se requiere un ID de pedido" });
-    }
-    
-    const videoFileName = pedidoToVideoMap[idPedido];
-    
-    if (!videoFileName) {
-        return res.status(404).json({ error: `No hay video asociado al pedido ${idPedido}` });
-    }
-    
-    const params = {
-        Bucket: BUCKET,
-        Key: videoFileName
-    };
-    
-    try {
-        console.log(`Intentando eliminar video ${videoFileName} de bucket: ${BUCKET}`);
-        await s3.deleteObject(params).promise();
-        console.log(`Video ${videoFileName} eliminado exitosamente`);
-        res.json({ mensaje: `Video para pedido ${idPedido} eliminado correctamente de S3` });
-    } catch (error) {
-        console.error("Error al eliminar:", error);
-        res.status(500).json({ error: "Error al eliminar el video", detalles: error.message });
-    }
-});
 
 // Ruta para descargar un video específico de S3 según el ID del pedido
 app.get("/descargar-video/:idPedido", async (req, res) => {
@@ -724,11 +697,8 @@ app.get("/descargar-video/:idPedido", async (req, res) => {
         return res.status(400).json({ error: "Se requiere un ID de pedido" });
     }
     
-    const videoFileName = pedidoToVideoMap[idPedido];
-    
-    if (!videoFileName) {
-        return res.status(404).json({ error: `No hay video asociado al pedido ${idPedido}` });
-    }
+    // Generar nombre de archivo basado en el ID del pedido
+    const videoFileName = `video-pedido-${idPedido}.mp4`;
     
     const params = {
         Bucket: BUCKET,
@@ -770,8 +740,6 @@ app.get("/descargar-video/:idPedido", async (req, res) => {
         res.status(500).json({ error: "Error al descargar el video", detalles: error.message });
     }
 });
-
-
 
 // Ruta para reproducir un video directamente (streaming)
 app.get("/stream-video/:key", async (req, res) => {
