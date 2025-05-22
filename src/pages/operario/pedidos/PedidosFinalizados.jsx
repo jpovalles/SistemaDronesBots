@@ -2,9 +2,16 @@ import React, { useState, useEffect } from "react";
 import "./PedidosFinalizados.css";
 import axios from 'axios';
 
+import PedidosActivosOjo from "./PedidosActivosOjo";
+
+import { obtenerReservasFinalizadas, obtenerUltimoLogReserva, API_URL } from "../../../api";
+
 function PedidosFinalizados() {
     const [loadingStates, setLoadingStates] = useState({});
     const [globalMessage, setGlobalMessage] = useState({ text: "", type: "" });
+    const [dataFinalizados, setDataFinalizados] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
     
     // Mapeo de IDs de pedido a nombres de archivos de video (Coincide con el backend)
     const pedidoToVideoMap = {
@@ -24,56 +31,7 @@ function PedidosFinalizados() {
         }
     }, [globalMessage]);
     
-    const dataActivos = [
-        {
-            idPedido: 123,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Entregado"
-        },
-        {
-            idPedido: 124,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Cancelado"
-        },
-        {
-            idPedido: 125,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Entregado"
-        },
-        {
-            idPedido: 126,
-            tipo_servicio: "Envío",
-            hora_inicio: "12:15 am",
-            tecnico_asociado: "Roberto Gomez",
-            remitente: {
-                nombre: "Juan Pablo Ospina",
-                id: 123456789
-            },
-            destino: "Edificio Palmas",
-            estado: "Mal clima"
-        },
-    ];
+    
 
     const getEstadoColor = (estado) => {
         switch(estado) {
@@ -92,7 +50,7 @@ function PedidosFinalizados() {
         
         try {
             // Enviar el ID del pedido al servidor
-            const response = await axios.post("http://localhost:5000/subir-video", { idPedido });
+            const response = await axios.post(`${API_URL}/subir-video`, { idPedido });
             setGlobalMessage({ 
                 text: `Video ${pedidoToVideoMap[idPedido]} subido exitosamente para el pedido ${idPedido}`,
                 type: "success" 
@@ -117,7 +75,7 @@ function PedidosFinalizados() {
         
         try {
             // Enviar solicitud DELETE con el ID del pedido
-            const response = await axios.delete("http://localhost:5000/eliminar-video", {
+            const response = await axios.delete(`${API_URL}/eliminar-video`, {
                 data: { idPedido } // Enviar el ID en el cuerpo de la solicitud DELETE
             });
             setGlobalMessage({ 
@@ -144,7 +102,7 @@ function PedidosFinalizados() {
         
         try {
             // Crear la URL para la descarga
-            const downloadUrl = `http://localhost:5000/descargar-video/${idPedido}`;
+            const downloadUrl = `${API_URL}/descargar-video/${idPedido}`;
             
             // Hacer una solicitud fetch para verificar primero si el video existe
             const checkResponse = await fetch(downloadUrl, { method: 'HEAD' });
@@ -182,6 +140,54 @@ function PedidosFinalizados() {
         }
     };
 
+    useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const reservas = await obtenerReservasFinalizadas();
+                    const reservasConEstado = await Promise.all(
+                        reservas.map(async (reserva) => {
+                            const ultimoLog = await fetchHoraFin(reserva.id);
+                            return {
+                                ...reserva,
+                                horaFin: ultimoLog
+                            };
+                        })
+                    );
+                    setDataFinalizados(reservasConEstado);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+        
+            fetchData();
+        }, [refreshTrigger]);
+        
+        const fetchHoraFin = async (idReserva) => {
+            try {
+                const log = await obtenerUltimoLogReserva(idReserva);
+                if (log) {
+                    const { hora } = log;
+                    return hora;
+                } else {
+                    return "No se pudo obtener la hora de fin";
+                }
+            } catch (error) {
+                console.error("Error al obtener la hora de fin:", error);
+                return "Error";
+            }
+        }
+
+        const handleVerDetalles = (pedido) => {
+            setPedidoSeleccionado(pedido);
+        }
+
+        const handleCerrarDetalles = () => {
+            setPedidoSeleccionado(null);
+            setRefreshTrigger(prev => prev + 1);
+        }
+    if (pedidoSeleccionado) {
+        return <PedidosActivosOjo pedido={pedidoSeleccionado} onClose={handleCerrarDetalles} />;
+    }
     return (
     <div className="pedidos-container-finalizados">
         {globalMessage.text && (
@@ -195,22 +201,27 @@ function PedidosFinalizados() {
                 <tr>
                     <th>Id del pedido</th>
                     <th>Tipo de servicio</th>
-                    <th>Técnico asociado</th>
+                    <th>Operario asociado</th>
                     <th>Remitente</th>
+                    <th>Fecha de inicio</th>
                     <th>Hora de inicio</th>
+                    <th>Hora de fin</th>
                     <th>Destino</th>
                     <th>Estado Final</th>
                     <th>Video</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {dataActivos.map((pedido) => (
-                    <tr key={pedido.idPedido}>
-                        <td>{pedido.idPedido}</td>
-                        <td>{pedido.tipo_servicio}</td>
-                        <td>{pedido.tecnico_asociado}</td>
-                        <td>{pedido.remitente.nombre}</td>
-                        <td>{pedido.hora_inicio}</td>
+                {dataFinalizados.map((pedido) => (
+                    <tr key={pedido.id}>
+                        <td>{pedido.id}</td>
+                        <td>Envio</td>
+                        <td>{pedido.operario}</td>
+                        <td>{pedido.remitente_nombre}</td>
+                        <td>{pedido.fecha.split('T')[0]}</td>
+                        <td>{pedido.hora}</td>
+                        <td>{pedido.horaFin}</td>
                         <td>{pedido.destino}</td>
                         <td>
                             <div 
@@ -230,29 +241,39 @@ function PedidosFinalizados() {
                             </div>
                         </td>
                         <td>
-                            <div className="video-actions">
+                            {pedido.estado === "Entregado" && (
+                                <div className="video-actions">
                                 <button 
-                                    onClick={() => subirVideo(pedido.idPedido)} 
-                                    disabled={loadingStates[pedido.idPedido]} 
+                                    onClick={() => subirVideo(pedido.id)} 
+                                    disabled={loadingStates[pedido.id]} 
                                     className="video-btn upload-btn"
                                 >
-                                    {loadingStates[pedido.idPedido] ? "Procesando..." : "Subir Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Subir Video"}
                                 </button>
                                 <button 
-                                    onClick={() => descargarVideo(pedido.idPedido)}
-                                    disabled={loadingStates[pedido.idPedido]} 
+                                    onClick={() => descargarVideo(pedido.id)}
+                                    disabled={loadingStates[pedido.id]} 
                                     className="video-btn download-btn"
                                 >
-                                    {loadingStates[pedido.idPedido] ? "Procesando..." : "Descargar Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Descargar Video"}
                                 </button>
                                 <button 
-                                    onClick={() => eliminarVideo(pedido.idPedido)} 
-                                    disabled={loadingStates[pedido.idPedido]} 
+                                    onClick={() => eliminarVideo(pedido.id)} 
+                                    disabled={loadingStates[pedido.id]} 
                                     className="video-btn delete-btn"
                                 >
-                                    {loadingStates[pedido.idPedido] ? "Procesando..." : "Eliminar Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Eliminar Video"}
                                 </button>
                             </div>
+                            )}
+                        </td>
+                        <td className="icono-ojo">
+                            <button 
+                                className="btn-ojo" 
+                                onClick={() => handleVerDetalles(pedido)}
+                            >
+                                <img src="/ojo-icon.png" alt="Ver detalles" className="imagen-ojo" />
+                            </button>
                         </td>
                     </tr>
                 ))}
