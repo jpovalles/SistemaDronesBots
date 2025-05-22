@@ -91,7 +91,7 @@ app.post('/confirmar-entrega/:idReserva', async (req, res) => {
 });
 
 
-// CRUD reservas
+// insertar una nueva reservas
 app.post('/reservas', async (req, res) => {
     const { fechaInicio, horaInicio, remitente, destinatario, origen, destino, observaciones, dispositivo, operario} = req.body;
     try {
@@ -131,6 +131,42 @@ app.get('/reservas/estado/:estado', async (req, res) => {
         JOIN users o ON r.operario = o.nombre_usuario
         WHERE r.estado = $1`,
         [estado]
+    );
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).json({ error: 'Error al obtener reservas' });
+    }
+});
+
+// Obtener los servicios finalizados
+app.get('/reservas/finalizados', async (req, res) => {
+    const [entregado, cancelado] = [3, 4];
+
+    try {
+        const result = await pool.query(
+        `SELECT 
+            r.remitente,
+            r.id,
+            u1.nombre AS remitente_nombre,
+            u2.nombre AS destinatario_nombre,
+            r.fecha,
+            r.hora,
+            r.origen,
+            r.destino,
+            r.observaciones,
+            r.dispositivo,
+            o.nombre AS operario,
+            er.estado AS estado
+        FROM reserva r
+        JOIN clients u1 ON r.remitente = u1.id
+        JOIN clients u2 ON r.destinatario = u2.id
+        JOIN users o ON r.operario = o.nombre_usuario
+        JOIN estado_reserva er ON r.estado = er.id
+        WHERE r.estado = $1 OR r.estado = $2
+        ORDER BY fecha DESC, hora DESC`,
+        [entregado, cancelado]
     );
 
         res.status(200).json(result.rows);
@@ -542,12 +578,8 @@ app.get("/reservas", async(req, res) => {
     }
 })
 
-/*
-app.get('/confirmar-entrega/', async (req, res) => {
-    console.log("Yujuuuuuuu")
-    res.send('Entrega confirmada');
-});
-*/
+
+
 
  
 /////////////////////////////////////////////////// AWS S3 ///////////////////////////////////////////////////

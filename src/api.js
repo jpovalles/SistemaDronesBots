@@ -19,6 +19,16 @@ export async function obtenerReservasPorEstado(estado) {
     }
     return response.json();
 }
+export async function obtenerReservasFinalizadas() {
+    const response = await fetch(`${API_URL}/reservas/finalizados`);
+    
+    if (!response.ok) {
+        throw new Error('Error al obtener las reservas');
+    }
+    return response.json();
+}
+
+
 
 // actualizar estado de reserva
 export async function actualizarEstadoReserva(idReserva, estado) {
