@@ -248,21 +248,21 @@ function PedidosFinalizados() {
                                     disabled={loadingStates[pedido.id]} 
                                     className="video-btn upload-btn"
                                 >
-                                    {loadingStates[pedido.id] ? "Procesando..." : "Subir Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Subir"}
                                 </button>
                                 <button 
                                     onClick={() => descargarVideo(pedido.id)}
                                     disabled={loadingStates[pedido.id]} 
                                     className="video-btn download-btn"
                                 >
-                                    {loadingStates[pedido.id] ? "Procesando..." : "Descargar Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Descargar"}
                                 </button>
                                 <button 
                                     onClick={() => eliminarVideo(pedido.id)} 
                                     disabled={loadingStates[pedido.id]} 
                                     className="video-btn delete-btn"
                                 >
-                                    {loadingStates[pedido.id] ? "Procesando..." : "Eliminar Video"}
+                                    {loadingStates[pedido.id] ? "Procesando..." : "Eliminar"}
                                 </button>
                             </div>
                             )}
