@@ -410,10 +410,7 @@ function InventarioDispositivos(){
                 <p><strong>Estado:</strong> {dispositivoSeleccionado.estado}</p>
                 <p><strong>Batería:</strong> {dispositivoSeleccionado.nivel_bateria}%</p>
                 <p><strong>Horas de uso:</strong> {"20"} horas</p>
-                <p><strong>Último servicio:</strong> {dispositivoSeleccionado.ultimoServicio}</p>
                 <p><strong>Adquisición:</strong> {formatoFecha(dispositivoSeleccionado.fecha)}</p>
-                <p><strong>Servicios realizados:</strong> {dispositivoSeleccionado.serviciosRealizados}</p>
-                <p><strong>Distancia recorrida:</strong> {dispositivoSeleccionado.distRecorrida}</p>
                 </div>
                 <div className="modal-botones">
                     {estados.map((state, i) => (
