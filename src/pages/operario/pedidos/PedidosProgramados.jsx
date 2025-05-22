@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./Pedidos.css";
 
-import { obtenerReservasPorEstado, actualizarEstadoReserva,  agregarEstadoReserva, agregarEstadoDispositivo} from "../../../api";
+import { obtenerReservasPorEstado, actualizarEstadoReserva,  agregarEstadoReserva, agregarEstadoDispositivo, sendMail} from "../../../api";
 
 import CancelarPedido from './CancelarPedido';
 
@@ -44,6 +44,8 @@ function PedidosProgramados() {
 
         if (diferenciaMs <= 0) {
             console.log("La hora ya pasó");
+            let minutos = Math.floor(diferenciaMs / 60000);
+            horas = Math.floor(minutos / 60);
         } else {
             let minutos = Math.floor(diferenciaMs / 60000);
             horas = Math.floor(minutos / 60);
@@ -64,7 +66,31 @@ function PedidosProgramados() {
         alert(`Observaciones: ${descripcion}`);
     }
 
-    const handlePlay = async (id, fecha, hora, dispositivo) => {
+    const enviarQRcorreo = async (id, remitente_nombre, hora, origen, destino) => {    
+        const html = `
+            <h2>Su pedido N.º ${id} ha iniciado su recorrido</h2>
+            <p>Hola <strong>${remitente_nombre}</strong>,</p>
+
+            <p>Le informamos que el pedido con ID <strong>${id}</strong> ha iniciado su recorrido hacia el destino.</p>
+
+            <h3>🛵 Detalles:</h3>
+            <ul>
+                <li><strong>Estado actual:</strong> En camino a recoger el pedido</li>
+                <li><strong>Hora de salida:</strong> ${hora}</li>
+                <li><strong>Origen:</strong> ${origen}</li>
+                <li><strong>Destino:</strong> ${destino}</li>
+            </ul>
+
+            <p>Puede consultar el estado del envío en tiempo real a través de la plataforma.</p>
+
+            <p>Saludos cordiales,<br>
+            <strong>Equipo de Logística Interna</strong></p>
+        `;
+        const response = await sendMail("jpovalles1120@gmail.com", 'Su pedido ha iniciado su recorrido', html);
+        console.log('Respuesta del servidor:', response);
+    }
+
+    const handlePlay = async (id, fecha, hora, dispositivo, remitente_nombre, origen, destino) => {
         console.log(id, fecha, hora, dispositivo);
         await actualizarEstadoReserva(id, 2);
         await agregarEstadoReserva({
@@ -80,6 +106,8 @@ function PedidosProgramados() {
             fecha: fecha,
             estado: `En camino a recoger el pedido`
         });
+
+        await enviarQRcorreo(id, remitente_nombre, hora, origen, destino);
 
         setRefreshTrigger(prev => prev + 1);
     }
@@ -140,7 +168,7 @@ function PedidosProgramados() {
                                         </svg>
                                     </div>
                                 }
-                                <div className="play-query" onClick={() => handlePlay(id, fecha.split('T')[0], hora, dispositivo)}>
+                                <div className="play-query" onClick={() => handlePlay(id, fecha.split('T')[0], hora, dispositivo,  remitente_nombre, origen, destino)}>
                                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" >
                                         <path fill-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM10.6935 15.8458L15.4137 13.059C16.1954 12.5974 16.1954 11.4026 15.4137 10.941L10.6935 8.15419C9.93371 7.70561 9 8.28947 9 9.21316V14.7868C9 15.7105 9.93371 16.2944 10.6935 15.8458Z" />
                                     </svg>

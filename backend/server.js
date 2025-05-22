@@ -4,6 +4,7 @@ const cors = require('cors');
 const {Pool} = require('pg');
 const path = require('path');
 
+const nodemailer = require("nodemailer");
 const app = express();
 
 app.use(cors());
@@ -26,6 +27,40 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
 })
+
+// Enviar correo
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "jpovallesceron@gmail.com", // Tu correo de Gmail
+      pass: process.env.GMAIL_PASS, // Usa la contraseña de aplicación
+    },
+});
+
+app.post('/enviar-mail', async (req, res) =>{
+    try {
+        const { to, subject, html } = req.body;
+        // Configurar el correo
+        const mailOptions = {
+            from: "jpovallesceron@gmail.com",
+            to: to,
+            subject: subject,
+            html: html,
+        };
+        
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log("Error al enviar el correo:", error);
+            } else {
+                console.log("Correo enviado con éxito:", info.response);
+            }
+        });
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
 
 // escanear QR y confirmar entrega
 app.post('/confirmar-entrega/:idReserva', async (req, res) => {

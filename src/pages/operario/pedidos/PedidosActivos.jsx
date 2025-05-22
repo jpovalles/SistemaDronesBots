@@ -110,7 +110,7 @@ function PedidosActivos() {
                                 <td>{pedido.destino}</td>
                                 <td>
                                     <div 
-                                        className={`botones-estado-act ${getEstadoClass(pedido.ultimoEstado)}`}
+                                        className={`botones-estado-act`}
                                         title={pedido.ultimoEstado} // Agregar título para mostrar el texto completo al hover
                                     >
                                         {pedido.ultimoEstado}

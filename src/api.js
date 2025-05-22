@@ -267,3 +267,14 @@ export async function obtenerReservas(){
     const response = await fetch(`${API_URL}/reservas`);
     return response.json();
 }
+
+
+// Enviar correo
+export async function sendMail(to, subject, html){
+    const response = await fetch(`${API_URL}/enviar-mail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({to, subject, html})
+    })
+    return response.json()
+}

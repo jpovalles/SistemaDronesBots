@@ -3,7 +3,9 @@ import {useState, useEffect} from "react";
 import "./PedidosActivosOjo.css";
 import { QRCodeCanvas } from "qrcode.react";
 
-import { obtenerLogsReserva, agregarEstadoReserva, agregarEstadoDispositivo, API_URL, obtenerUltimoLogReserva} from "../../../api";
+import { obtenerLogsReserva, agregarEstadoReserva, agregarEstadoDispositivo, API_URL, obtenerUltimoLogReserva, sendMail} from "../../../api";
+
+import QRCode from 'qrcode';
 
 function DetallePedido({ pedido, onClose }) {
 
@@ -36,7 +38,31 @@ function DetallePedido({ pedido, onClose }) {
     return `${hh}:${mm}:${ss}`;
   }
 
-  const handlePlay = async (id, dispositivo, fecha, hora) => {
+  const enviarQRcorreo = async (id, destinatario_nombre, remitente_nombre, hora_entrega, destino) => {    
+          const html = `
+              <h2>Pedido disponible para recogida - ID ${id}</h2>
+              <p>Estimado/a <strong>${destinatario_nombre}</strong>,</p>
+
+              <p>El pedido con ID <strong>${id}</strong>, remitido por <strong>${remitente_nombre}</strong>, ya se encuentra disponible para ser recogido.</p>
+
+              <h3>📍 Detalles de entrega:</h3>
+              <ul>
+                <li><strong>Ubicación de entrega:</strong> ${destino}</li>
+                <li><strong>Hora estimada de llegada:</strong> ${hora_entrega}</li>
+              </ul>
+
+              <p><em>Presente el código de verificación al momento de la entrega.</em></p>
+
+              <p>Gracias por su colaboración.</p>
+
+              <p>Saludos,<br>
+              <strong>Equipo de Logística Interna</strong></p>
+          `;
+          const response = await sendMail("rookienuck@gmail.com", 'Su pedido está disponible para entrega', html);
+          console.log('Respuesta del servidor:', response);
+      }
+
+  const handlePlay = async (id, dispositivo, fecha, hora, destinatario_nombre, remitente_nombre, destino) => {
           console.log(id, fecha, hora, dispositivo);
 
           const log = await obtenerUltimoLogReserva(id);
@@ -57,6 +83,10 @@ function DetallePedido({ pedido, onClose }) {
               fecha: fecha,
               estado: estados[nuevoIndice]
           });
+          
+          console.log(estados[nuevoIndice] === "Esperando código QR");
+          
+          if(estados[nuevoIndice] === "Esperando código QR") await enviarQRcorreo(id, destinatario_nombre, remitente_nombre, nuevaHora, destino);
   
           setRefreshTrigger(prev => prev + 1);
       }
@@ -68,6 +98,8 @@ function DetallePedido({ pedido, onClose }) {
   }, [refreshTrigger]);
 
   console.log(bitacora);
+
+  
 
 
   return (
@@ -134,7 +166,7 @@ function DetallePedido({ pedido, onClose }) {
           ))
           }
           { bitacora.length < 2 + estados.length && pedido.estado === 2 ? 
-          <div className="play-query" onClick={() => handlePlay(pedido.id, pedido.dispositivo, pedido.fecha, pedido.hora)}>
+          <div className="play-query" onClick={() => handlePlay(pedido.id, pedido.dispositivo, pedido.fecha, pedido.hora, pedido.destinatario_nombre, pedido.remitente_nombre, pedido.destino )}>
               <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" >
                   <path fill-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM10.6935 15.8458L15.4137 13.059C16.1954 12.5974 16.1954 11.4026 15.4137 10.941L10.6935 8.15419C9.93371 7.70561 9 8.28947 9 9.21316V14.7868C9 15.7105 9.93371 16.2944 10.6935 15.8458Z" />
               </svg>

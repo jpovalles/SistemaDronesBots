@@ -3,7 +3,7 @@ import { obtenerCliente } from "../../../api";
 
 import "./FinalSolicitud.css";
 
-import {agregarReserva, agregarEstadoReserva, agregarEstadoDispositivo} from "../../../api";
+import {agregarReserva, agregarEstadoReserva, agregarEstadoDispositivo, sendMail} from "../../../api";
 
 function FinalSolicitud({previousStop, solicitud, restartWizard}) {
 
@@ -30,6 +30,33 @@ function FinalSolicitud({previousStop, solicitud, restartWizard}) {
 
         fetchClientData();
     }, [remitente, destinatario]);
+
+
+    const enviarQRcorreo = async (id, fecha, hora, origen, destino) => {    
+        const html = `
+            <h2>Confirmación de Agendamiento de Pedido</h2>
+            <p>Estimado/a <strong>${remitenteData.nombre}</strong>,</p>
+            <p>Le informamos que su pedido con ID <strong>${id}</strong> ha sido agendado exitosamente en nuestro sistema.</p>
+
+            <h3>📦 Detalles del pedido:</h3>
+            <ul>
+                <li><strong>Fecha de agendamiento:</strong> ${fecha}</li>
+                <li><strong>Hora de inicio estimada:</strong> ${hora}</li>
+                <li><strong>Origen:</strong> ${origen}</li>
+                <li><strong>Destino:</strong> ${destino}</li>
+                <li><strong>Operario asignado:</strong> ${operario}</li>
+            </ul>
+
+            <p>Le notificaremos cuando el pedido inicie su recorrido.</p>
+            <p>Gracias por confiar en nuestro servicio.</p>
+
+            <p>Atentamente,<br>
+            <strong>Equipo de Logística Interna</strong></p>
+        `;
+        const response = await sendMail("jpovalles1120@gmail.com", 'Agendamiento de pedido', html);
+        console.log('Respuesta del servidor:', response);
+    }
+
 
     const handleSubmit = async () => {
         try {
@@ -66,6 +93,8 @@ function FinalSolicitud({previousStop, solicitud, restartWizard}) {
                     fecha: fecha,
                     estado: `Dispositivo asignado al servicio ${response.id}`
                 });
+
+                await enviarQRcorreo(response.id, fecha, hora, origen, destino);
                 
                 alert("Reserva creada exitosamente");
                 restartWizard();

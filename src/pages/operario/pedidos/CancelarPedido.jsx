@@ -1,12 +1,47 @@
 import React from "react";
 
-import { eliminarReserva, actualizarEstadoReserva, agregarMulta, agregarEstadoReserva, agregarEstadoDispositivo } from "../../../api";
+import { eliminarReserva, actualizarEstadoReserva, agregarMulta, agregarEstadoReserva, agregarEstadoDispositivo, sendMail } from "../../../api";
 
 import './CancelarPedido.css';
 
 function CancelarPedido({idPedido, idusuario, usuario, multa, setShowCancel, onCancelSuccess}){
 
     const [titulo, setTitulo] = React.useState("Una vez cancelado, no podrás recuperar este servicio. ¿Deseas continuar?");
+
+    const enviarQRcorreo = async (id, multa) => {    
+        const html = multa ? `
+        <p>Estimado/a usuario,</p>
+
+        <p>Ha cancelado voluntariamente su pedido con ID <strong>${id}</strong>. Sin embargo, esta cancelación fue realizada fuera del tiempo permitido.</p>
+
+        <p>Por este motivo, se ha generado una <strong>multa de ${multa}</strong> de acuerdo con las políticas del servicio.</p>
+
+        <p><strong>Recuerde que debe pagar esta multa antes de poder agendar un nuevo servicio.</strong></p>
+
+        <p>Para más información, consulte su historial de pedidos o comuníquese con el área administrativa.</p>
+
+        <p>Gracias por su comprensión.</p>
+
+        <p>Saludos cordiales,<br>
+        <strong>Equipo de Logística Interna</strong></p>
+    `: `
+            <h2> Pedido cancelado</h2>
+
+            <p>Estimado/a usuario,</p>
+
+            <p>Le confirmamos que se ha cancelado su pedido con ID <strong>${id}</strong>.</p>
+
+            <p>La cancelación fue procesada correctamente y el pedido ha sido eliminado del sistema.</p>
+
+            <p>Si desea realizar un nuevo pedido, puede hacerlo desde la biblioteca en cualquier momento.</p>
+
+            <p>Saludos cordiales,<br>
+            <strong>Equipo de Logística Interna</strong></p>
+        `;
+        const asunto = multa ? "Pedido cancelado con penalización" : "Pedido cancelado";
+        const response = await sendMail("jpovalles1120@gmail.com", asunto, html);
+        console.log('Respuesta del servidor:', response);
+    }
     
     const handleCancel = async () => {
         try {
@@ -32,6 +67,7 @@ function CancelarPedido({idPedido, idusuario, usuario, multa, setShowCancel, onC
             });
 
             if (response) {
+                await enviarQRcorreo(idPedido, multa);
                 alert("Reserva cancelada exitosamente");
                 onCancelSuccess();
             } else {
