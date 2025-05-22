@@ -357,8 +357,6 @@ function InventarioDispositivos(){
             <th>Último servicio</th>
             <th>Fecha adquisición</th>
             <th>Detalles</th>
-            <th>Cámara</th>
-            <th>QR</th>
             </tr>
         </thead>
         <tbody>
@@ -372,19 +370,6 @@ function InventarioDispositivos(){
                 <td>{formatoFecha(d.fecha)}</td>
                 <td>
                 <button onClick={() => abrirModal(d)} className="btn-lupa">🔍</button>
-                </td>
-                <td>
-                  <button 
-                    className="btn-camara"
-                    onClick={() => abrirModalCamara(d)} 
-                  >📷</button>
-                </td>
-
-                <td>
-                  <button 
-                    className="btn-qr"
-                    onClick={() => abrirModalQR(d)} 
-                  >📲</button>
                 </td>
             
             </tr>

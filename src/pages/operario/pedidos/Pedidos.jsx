@@ -44,7 +44,7 @@ function Pedidos() {
             >
                 Finalizados
             </button>
-            <input type="text" className="search-input" placeholder="🔍  Id del pedido" />
+            
         </div>
 
         {activeTab === "activos" ? 

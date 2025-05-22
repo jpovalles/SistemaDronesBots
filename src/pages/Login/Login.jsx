@@ -52,14 +52,8 @@ function Login() {
                 setTimeout(() => navigate("/"), 1000);
             }
         } else {
-            if (tries - 1 === 0) {
-                setIsBlocked(true);
-                setMensaje("");
-            } else {
-                setStatusColor("#ff5252");
-                setTries(tries - 1);
-                setMensaje(`${data.message}. Intentos restantes: ${tries - 1}`);                
-            }
+            setStatusColor("#ff5252");
+            setMensaje(`${data.message}.`);   
         }
     }
 

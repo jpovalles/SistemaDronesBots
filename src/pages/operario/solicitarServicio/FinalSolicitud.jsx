@@ -94,7 +94,7 @@ function FinalSolicitud({previousStop, solicitud, restartWizard}) {
                     estado: `Dispositivo asignado al servicio ${response.id}`
                 });
 
-                await enviarQRcorreo(response.id, fecha, hora, origen, destino);
+                await enviarQRcorreo(response.id, fecha, horaInicio, origen, destino);
                 
                 alert("Reserva creada exitosamente");
                 restartWizard();
