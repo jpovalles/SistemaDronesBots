@@ -578,12 +578,8 @@ app.get("/reservas", async(req, res) => {
     }
 })
 
-/*
-app.get('/confirmar-entrega/', async (req, res) => {
-    console.log("Yujuuuuuuu")
-    res.send('Entrega confirmada');
-});
-*/
+
+
 
  
 /////////////////////////////////////////////////// AWS S3 ///////////////////////////////////////////////////
